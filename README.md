@@ -2,7 +2,7 @@
 
 This is a basic template repository for a python project. 
 
-Change the `package_name` in: `pyproject.toml` to the name of your package (doing a global search and repolace for the default string `basic_repo_template`.
+Change the `package_name` in: `pyproject.toml` to the name of your package (doing a global search and repolace for the default string `skelly_viewer`.
 
 
 You'll also want to change the `name`, `email` etc in `pyproject.toml` and `{repository_name}.__init__.py` to your own details.
