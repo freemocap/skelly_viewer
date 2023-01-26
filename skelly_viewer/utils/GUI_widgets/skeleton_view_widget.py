@@ -24,34 +24,21 @@ class SkeletonViewWidget(QWidget):
         self._layout = QVBoxLayout()
         self.setLayout(self._layout)
 
-        self.folder_open_button = QPushButton('Load a session folder', self)
-        self._layout.addWidget(self.folder_open_button)
-        self.folder_open_button.clicked.connect(self.open_folder_dialog)
-
         self.fig, self.ax = self.initialize_skeleton_plot()
         self._layout.addWidget(self.fig)
 
-        self.session_folder_path = None
-
-    def open_folder_dialog(self):
-
-        self.folder_diag = QFileDialog()
-        self.session_folder_path = QFileDialog.getExistingDirectory(None, "Choose a session")
-
-        if self.session_folder_path:
-            self.session_folder_path = Path(self.session_folder_path)
-
+    def load_session_data(self, session_folder_path: Path):
+        self.session_folder_path = session_folder_path
         data_array_folder = DATA_FOLDER_NAME
         array_name = MEDIAPIPE_3D_BODY_FILE_NAME
 
         skeleton_data_folder_path = self.session_folder_path / data_array_folder / array_name
         self.skel3d_data = np.load(skeleton_data_folder_path)
-
         self.mediapipe_skeleton = build_skeleton(self.skel3d_data, mediapipe_indices, mediapipe_connections)
 
         self.num_frames = self.skel3d_data.shape[0]
-        # self.reset_slider()
         self.reset_skeleton_3d_plot()
+
         self.session_folder_loaded_signal.emit()
 
     def initialize_skeleton_plot(self):
