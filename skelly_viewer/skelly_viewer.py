@@ -5,15 +5,13 @@ from utils.GUI_widgets.slider_widget import FrameCountSlider
 from utils.GUI_widgets.multi_camera_capture_widget import MultiVideoDisplay
 
 
-class MainWindow(QMainWindow):
+class SkellyViewer(QWidget):
     # session_folder_loaded_signal = pyqtSignal()
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("My App")
-
         layout = QHBoxLayout()
-        widget = QWidget()
+        # widget = QWidget()
 
         slider_and_skeleton_layout = QVBoxLayout()
 
@@ -29,8 +27,8 @@ class MainWindow(QMainWindow):
         # self.multi_video_display.setFixedSize(self.skeleton_view_widget.size()*1.5)
         layout.addWidget(self.multi_video_display)
 
-        widget.setLayout(layout)
-        self.setCentralWidget(widget)
+        self.setLayout(layout)
+        # self.setCentralWidget(widget)
 
         self.connect_signals_to_slots()
 
@@ -49,6 +47,15 @@ class MainWindow(QMainWindow):
         self.frame_count_slider.slider.valueChanged.connect(
             lambda: self.multi_video_display.update_display(self.frame_count_slider.slider.value()) if (
                 self.multi_video_display.are_videos_loaded) else None)
+
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("My App")
+
+        self.skelly_viewer = SkellyViewer()
+        self.setCentralWidget(self.skelly_viewer)
 
 
 def main():
