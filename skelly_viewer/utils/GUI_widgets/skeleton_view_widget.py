@@ -24,8 +24,22 @@ class SkeletonViewWidget(QWidget):
         self._layout = QVBoxLayout()
         self.setLayout(self._layout)
 
+        self.folder_open_button = QPushButton('Load a session folder', self)
+        self._layout.addWidget(self.folder_open_button)
+        self.folder_open_button.clicked.connect(self.open_folder_dialog)
+
         self.fig, self.ax = self.initialize_skeleton_plot()
         self._layout.addWidget(self.fig)
+
+    def open_folder_dialog(self):
+
+        self.folder_diag = QFileDialog()
+        self.session_folder_path = QFileDialog.getExistingDirectory(None, "Choose a session")
+
+        if self.session_folder_path:
+            self.session_folder_path = Path(self.session_folder_path)
+
+        self.load_session_data(self.session_folder_path)
 
     def load_session_data(self, session_folder_path: Path):
         self.session_folder_path = session_folder_path

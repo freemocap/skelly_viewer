@@ -51,10 +51,10 @@ class MultiVideoDisplay(QWidget):
         self._layout = QVBoxLayout()
         self.setLayout(self._layout)
 
-        #self.video_folder_load_button = QPushButton('Load a folder of videos', self)
-        #self.video_folder_load_button.setEnabled(False)
-        #self._layout.addWidget(self.video_folder_load_button)
-        #self.video_folder_load_button.clicked.connect(self.load_video_folder)
+        self.video_folder_load_button = QPushButton('Load a folder of videos', self)
+        self.video_folder_load_button.setEnabled(False)
+        self._layout.addWidget(self.video_folder_load_button)
+        self.video_folder_load_button.clicked.connect(self.open_video_folder_dialogue)
 
         self.video_display_layout = QGridLayout()
         self._layout.addLayout(self.video_display_layout)
@@ -64,11 +64,17 @@ class MultiVideoDisplay(QWidget):
     def set_session_folder_path(self, session_folder_path: Path):
         self.session_folder_path = session_folder_path
 
-    def load_video_folder(self, video_folder_path:Path):
+    def open_video_folder_dialogue(self):
+        self.folder_diag = QFileDialog()
+        self.video_folder_path = QFileDialog.getExistingDirectory(None, "Choose a folder of videos",
+                                                                  directory=str(self.session_folder_path))
+        self.load_video_folder_from_path(self.video_folder_path)
+
+    def load_video_folder_from_path(self, video_folder_path: Path):
         # get a path to the video folder, generate a list of the video paths and the number of videos and create the video display widget based on that
         self.video_folder_path = video_folder_path
-        #self.folder_diag = QFileDialog()
-        #self.video_folder_path = QFileDialog.getExistingDirectory(None, "Choose a folder of videos",
+        # self.folder_diag = QFileDialog()
+        # self.video_folder_path = QFileDialog.getExistingDirectory(None, "Choose a folder of videos",
         #                                                          directory=str(self.session_folder_path))
         self.list_of_video_paths, self.number_of_videos = self.create_list_of_video_paths(self.video_folder_path)
         self.generate_video_display(self.list_of_video_paths, self.number_of_videos)

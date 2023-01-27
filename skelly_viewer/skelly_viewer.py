@@ -9,11 +9,8 @@ from pathlib import Path
 
 class SkellyViewer(QWidget):
     # session_folder_loaded_signal = pyqtSignal()
-    def __init__(self, path_to_session_folder: Path, path_to_video_folder: Path):
+    def __init__(self, path_to_session_folder=None, path_to_video_folder=None):
         super().__init__()
-
-        self.path_to_session_folder = path_to_session_folder
-        self.path_to_video_folder = path_to_video_folder
 
         layout = QHBoxLayout()
 
@@ -35,17 +32,24 @@ class SkellyViewer(QWidget):
 
         self.connect_signals_to_slots()
 
-        self.skeleton_view_widget.load_session_data(self.path_to_session_folder)
-        self.multi_video_display.load_video_folder(self.path_to_video_folder)
+        if path_to_session_folder and path_to_video_folder:
+            # this block of code disables the buttons and lets you specify session and video paths in the widget call
+            self.path_to_session_folder = path_to_session_folder
+            self.path_to_video_folder = path_to_video_folder
+            self.skeleton_view_widget.load_session_data(self.path_to_session_folder)
+            self.multi_video_display.load_video_folder_from_path(self.path_to_video_folder)
+
+            self.multi_video_display.video_folder_load_button.setEnabled(False)
+            self.skeleton_view_widget.folder_open_button.setEnabled(False)
         f = 2
 
     def connect_signals_to_slots(self):
         self.skeleton_view_widget.session_folder_loaded_signal.connect(
             lambda: self.frame_count_slider.set_slider_range(self.skeleton_view_widget.num_frames))
-        #self.skeleton_view_widget.session_folder_loaded_signal.connect(
-        #    lambda: self.multi_video_display.video_folder_load_button.setEnabled(True))
-        #self.skeleton_view_widget.session_folder_loaded_signal.connect(
-        #    lambda: self.multi_video_display.set_session_folder_path(self.skeleton_view_widget.session_folder_path))
+        self.skeleton_view_widget.session_folder_loaded_signal.connect(
+            lambda: self.multi_video_display.video_folder_load_button.setEnabled(True))
+        self.skeleton_view_widget.session_folder_loaded_signal.connect(
+            lambda: self.multi_video_display.set_session_folder_path(self.skeleton_view_widget.session_folder_path))
 
         self.frame_count_slider.slider.valueChanged.connect(
             lambda: self.skeleton_view_widget.replot(self.frame_count_slider.slider.value()))
@@ -58,12 +62,10 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        path_to_session = Path(r'D:\ValidationStudy_aaron\FreeMoCap_Data\sesh_2022-11-02_13_55_55_atc_nih_balance')
-        path_to_videos = Path(r'D:\ValidationStudy_aaron\FreeMoCap_Data\sesh_2022-11-02_13_55_55_atc_nih_balance\Annotated_Videos')
+        path_to_session = None
+        path_to_videos = None
 
-        self.setWindowTitle("My App")
-
-        self.skelly_viewer = SkellyViewer(path_to_session,path_to_videos)
+        self.skelly_viewer = SkellyViewer(path_to_session, path_to_videos)
         self.setCentralWidget(self.skelly_viewer)
 
 
