@@ -25,7 +25,7 @@ keywords = ["basic",
             "python",
             "repository"] #change these to your project keywords
 
-dependencies = ["pytest","numpy","rich", "PyQt6", 'opencv-contrib-python',"pandas","matplotlib","scipy","mediapipe"] #add additional dependencies here - try to pin versions as minimally as possible
+dependencies = ["pytest","numpy","rich", "PyQt6", 'opencv-contrib-python',"pandas","matplotlib"] #add additional dependencies here - try to pin versions as minimally as possible
 
 requires-python = ">=3.8"
 
