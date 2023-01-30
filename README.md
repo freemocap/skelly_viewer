@@ -1,16 +1,23 @@
-# Basic Repo Template
+# Installation
 
-This is a basic template repository for a python project. 
+Create a conda environment using Python 3.9 (though 3.8/3.10 should work too, if that matters) and activate your conda environment 
 
-Change the `package_name` in: `pyproject.toml` to the name of your package (doing a global search and repolace for the default string `skelly_viewer`.
+Install skelly_viewer using `pip install skelly_viewer`
+
+# Usage
+
+After installing, in your conda terminal (with the right environment active), type `skelly_viewer'
+
+You should see a GUI pop up with an empty graph, a slider, and two buttons
+
+Click the `Load a session folder` button, and select a session folder that you would like to view the data from using the folder dialog 
+(NOTE: As of right now, this viewer only works with pre-alpha labeled, post-processed data (it looks the `DataArrays` folder with a file 
+called `mediaPipeSkel_3d_origin_aligned.npy` inside of it)
+
+You can move the slider, and the 3D graph should show your skeleton
+
+If you hit the `Load Videos` button on the side, select a folder of videos within your current session. When you move the slider, the videos
+should load in and appear on the right hand side 
 
 
-You'll also want to change the `name`, `email` etc in `pyproject.toml` and `{repository_name}.__init__.py` to your own details.
 
-## Publishing to PyPi (to make it pip installable)
-
-NOTE - These instructions haven't been tested yet, this is placeholder text (written 2023-01-19)
-
-You'll need to create a PyPi account and then create an API token for the Github Action configured in the file: `.github/workflows/publish_to_pypi_when_new_tag_is_pushed_to_main.yml` 
-
-These instructions may help you set that up! https://packaging.python.org/en/latest/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/
