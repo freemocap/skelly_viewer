@@ -1,6 +1,6 @@
 """Top-level package for basic_template_repo."""
 
-__package_name__ = "skelly_viewer"
+__package_name__ = "skellyviewer"
 __version__ = "v2023.01.1006"
 
 __author__ = """Skelly FreeMoCap"""
@@ -22,6 +22,6 @@ sys.path.insert(0, str(base_package_path))  # add parent directory to sys.path
 
 from skelly_viewer.system.default_paths import get_log_file_path
 from skelly_viewer.system.logging_configuration import configure_logging
-from skelly_viewer.skelly_viewer import SkellyViewer
+from skelly_viewer.skellyviewer import SkellyViewer
 
 configure_logging(log_file_path=get_log_file_path())
