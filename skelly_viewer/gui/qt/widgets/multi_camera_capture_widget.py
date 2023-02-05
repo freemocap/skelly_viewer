@@ -3,7 +3,7 @@ from pathlib import Path
 
 from PyQt6.QtWidgets import QWidget, QLabel, QVBoxLayout, QPushButton, QFileDialog, QGridLayout
 
-from skelly_viewer.utils.workers.video_processing_worker import VideoProcessingWorker
+from skelly_viewer.utilities.video_handler import VideoHandler
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +62,7 @@ class MultiVideoDisplay(QWidget):
         self.video_worker_dictionary = {}
 
         for count, video_path in enumerate(list_of_video_paths):
-            self.video_worker_dictionary[count] = VideoProcessingWorker(video_path)
+            self.video_worker_dictionary[count] = VideoHandler(video_path)
 
         return self.video_worker_dictionary
         f = 2

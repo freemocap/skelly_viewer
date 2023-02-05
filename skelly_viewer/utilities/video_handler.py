@@ -6,7 +6,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QLabel
 
 
-class VideoProcessingWorker():
+class VideoHandler():
     # this is a worker that handles all the video processing stuff - loading the videos as well as grabbing, converting, and displaying frames
     def __init__(self, video_path: Path):
         self.video_path = video_path

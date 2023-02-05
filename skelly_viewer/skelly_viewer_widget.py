@@ -1,10 +1,11 @@
-from PyQt6.QtWidgets import QMainWindow, QWidget, QApplication, QHBoxLayout, QVBoxLayout
-
-from utils.GUI_widgets.skeleton_view_widget import SkeletonViewWidget
-from utils.GUI_widgets.slider_widget import FrameCountSlider
-from utils.GUI_widgets.multi_camera_capture_widget import MultiVideoDisplay
-
 from pathlib import Path
+
+from PyQt6.QtWidgets import QMainWindow, QWidget, QApplication, QHBoxLayout, QVBoxLayout, QPushButton, QFileDialog
+from skelly_viewer.config.folder_directory import DATA_FOLDER_NAME, MEDIAPIPE_3D_BODY_FILE_NAME
+
+from skelly_viewer.gui.qt.widgets.multi_camera_capture_widget import MultiVideoDisplay
+from skelly_viewer.gui.qt.widgets.skeleton_view_widget import SkeletonViewWidget
+from skelly_viewer.gui.qt.widgets.slider_widget import FrameCountSlider
 
 
 class SkellyViewer(QWidget):
@@ -36,7 +37,7 @@ class SkellyViewer(QWidget):
             # this block of code disables the buttons and lets you specify session and video paths in the widget call
             self.path_to_session_folder = path_to_session_folder
             self.path_to_video_folder = path_to_video_folder
-            self.skeleton_view_widget.load_session_data(self.path_to_session_folder)
+            self.skeleton_view_widget.load_skeleton_data(self.path_to_session_folder)
             self.multi_video_display.load_video_folder_from_path(self.path_to_video_folder)
 
             self.multi_video_display.video_folder_load_button.setEnabled(False)
@@ -44,15 +45,15 @@ class SkellyViewer(QWidget):
         f = 2
 
     def connect_signals_to_slots(self):
-        self.skeleton_view_widget.session_folder_loaded_signal.connect(
-            lambda: self.frame_count_slider.set_slider_range(self.skeleton_view_widget.num_frames))
-        self.skeleton_view_widget.session_folder_loaded_signal.connect(
+        self.skeleton_view_widget.skeleton_data_loaded_signal.connect(
+            lambda: self.frame_count_slider.set_slider_range(self.skeleton_view_widget._number_of_frames))
+        self.skeleton_view_widget.skeleton_data_loaded_signal.connect(
             lambda: self.multi_video_display.video_folder_load_button.setEnabled(True))
-        self.skeleton_view_widget.session_folder_loaded_signal.connect(
+        self.skeleton_view_widget.skeleton_data_loaded_signal.connect(
             lambda: self.multi_video_display.set_session_folder_path(self.skeleton_view_widget.session_folder_path))
 
         self.frame_count_slider.slider.valueChanged.connect(
-            lambda: self.skeleton_view_widget.replot(self.frame_count_slider.slider.value()))
+            lambda: self.skeleton_view_widget.update_skeleton_plot(self.frame_count_slider.slider.value()))
         self.frame_count_slider.slider.valueChanged.connect(
             lambda: self.multi_video_display.update_display(self.frame_count_slider.slider.value()) if (
                 self.multi_video_display.are_videos_loaded) else None)
@@ -61,12 +62,30 @@ class SkellyViewer(QWidget):
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.setWindowTitle('Skelly Viewer \U0000E419')
 
-        path_to_session = None
-        path_to_videos = None
+        widget = QWidget()
+        self._layout = QVBoxLayout()
+        widget.setLayout(self._layout)
+        self.setCentralWidget(widget)
 
-        self.skelly_viewer = SkellyViewer(path_to_session, path_to_videos)
-        self.setCentralWidget(self.skelly_viewer)
+        self._folder_open_button = QPushButton('Load a session folder', self)
+        self._layout.addWidget(self._folder_open_button)
+        self._folder_open_button.clicked.connect(self._open_folder_dialog)
+
+        self._skelly_viewer = SkellyViewer()
+        self._layout.addWidget(self._skelly_viewer)
+
+
+    def _open_folder_dialog(self):
+        self.folder_diag = QFileDialog()
+        self._session_folder_path = QFileDialog.getExistingDirectory(None, "Choose a session")
+
+        if self._session_folder_path:
+            self._session_folder_path = Path(self._session_folder_path)
+
+        self._skeleton_npy_path =  self._session_folder_path / DATA_FOLDER_NAME / MEDIAPIPE_3D_BODY_FILE_NAME
+
 
 
 def main():
