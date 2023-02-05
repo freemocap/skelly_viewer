@@ -9,8 +9,8 @@ from skelly_viewer.config.folder_directory import MEDIAPIPE_3D_BODY_FILE_NAME, D
 class SkellyViewerMainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle('Skelly Viewer \U0000E419')
-
+        self.setWindowTitle('Skelly Viewer \U0001F480 \U0001F440')
+        self.setGeometry(100, 100, 1200, 600)
         widget = QWidget()
         self._layout = QVBoxLayout()
         widget.setLayout(self._layout)

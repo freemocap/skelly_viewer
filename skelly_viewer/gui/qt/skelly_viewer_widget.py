@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Union
 
+from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout
 
 from skelly_viewer.gui.qt.widgets.multi_video_display import MultiVideoDisplay
@@ -15,8 +16,10 @@ class SkellyViewer(QWidget):
 
         layout = QVBoxLayout()
         self.setLayout(layout)
+        layout.setAlignment(Qt.AlignmentFlag.AlignBottom)
 
         skeleton_and_videos_layout = QHBoxLayout()
+        skeleton_and_videos_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
         self._skeleton_view_widget = SkeletonViewWidget()
         self._skeleton_view_widget.setFixedSize(self._skeleton_view_widget.size())
