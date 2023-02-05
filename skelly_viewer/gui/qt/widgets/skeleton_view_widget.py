@@ -27,8 +27,8 @@ class SkeletonViewWidget(QWidget):
         self._figure_widget, self._3d_axes = self.initialize_skeleton_plot()
         self._layout.addWidget(self._figure_widget)
 
-    def load_skeleton_data(self, mediapipe_skeleton_npy: Union[str, Path]):
-        self._skeleton_3d_frame_marker_xyz = np.load(str(mediapipe_skeleton_npy))
+    def load_skeleton_data(self, mediapipe_skeleton_npy_path: Union[str, Path]):
+        self._skeleton_3d_frame_marker_xyz = np.load(str(mediapipe_skeleton_npy_path))
         self._mediapipe_skeleton = build_skeleton(skeleton_3d_frame_marker_xyz=self._skeleton_3d_frame_marker_xyz,
                                                   pose_estimation_markers_list=mediapipe_indices,
                                                   pose_estimation_connections_dict=mediapipe_connections)

@@ -3,6 +3,7 @@
 from pathlib import Path
 
 import numpy as np
+
 from skelly_viewer.config.folder_directory import MEDIAPIPE_3D_BODY_FILE_NAME, DATA_FOLDER_NAME, \
     TOTAL_BODY_CENTER_OF_MASS_NPY_FILE_NAME
 

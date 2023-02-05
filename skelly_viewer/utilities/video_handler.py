@@ -1,10 +1,13 @@
+import logging
 from pathlib import Path
+from typing import Union
 
 import cv2
+import numpy as np
 from PyQt6 import QtGui
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QLabel
 
+logger = logging.getLogger(__name__)
 
 class VideoHandler():
     # this is a worker that handles all the video processing stuff - loading the videos as well as grabbing, converting, and displaying frames
@@ -17,24 +20,30 @@ class VideoHandler():
         video_capture_object = cv2.VideoCapture(str(self.video_path))
         return video_capture_object
 
-    def increment_frame_number(self, frame_number: int):
+    def get_image_for_frame_number(self, frame_number: int)->np.ndarray:
         # whenever a frame number is given, set the video to the frame, read it out, and convert it to a pixmap
-        self.set_video_to_frame(frame_number)
-        frame = self.read_frame_from_video()
-        self.pixmap = self.convert_frame_to_pixmap(frame)
+        self.set_video_to_frame(frame_number-1)
+        image = self.read_frame_from_video()
+        return image
+
 
     def set_video_to_frame(self, frame_number: int):
         self.video_capture_object.set(cv2.CAP_PROP_POS_FRAMES, frame_number)
 
-    def read_frame_from_video(self):
-        ret, frame = self.video_capture_object.read()
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        return frame
+    def read_frame_from_video(self) ->Union[None, np.ndarray]:
+        success, image = self.video_capture_object.read()
+        if not success:
+            logger.exception(f"Error reading image from {Path(self.video_path).name}")
+            raise Exception
 
-    def convert_frame_to_pixmap(self, frame):
-        img = QtGui.QImage(frame, frame.shape[1], frame.shape[0], QtGui.QImage.Format.Format_RGB888)
+
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        return image
+
+    def _convert_frame_to_pixmap(self, image:np.ndarray):
+        q_image = QtGui.QImage(image, image.shape[1], image.shape[0], QtGui.QImage.Format.Format_RGB888)
         QtGui.QPixmap()
-        pix = QtGui.QPixmap.fromImage(img)
+        pix = QtGui.QPixmap.fromImage(q_image)
         resized_pixmap = pix.scaled(640, 480, Qt.AspectRatioMode.KeepAspectRatio)
         return resized_pixmap
 
