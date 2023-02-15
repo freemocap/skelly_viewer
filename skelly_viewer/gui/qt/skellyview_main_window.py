@@ -54,6 +54,8 @@ class SkellyViewerMainWindow(QMainWindow):
             if subfolder_path.name == 'output_data':
                 return subfolder_path
 
+        raise Exception(f"Could not find a data folder in path {str(session_folder_path)}")
+
 
     def _find_synchronized_videos_folder_path(self, session_folder_path: Path) -> Path:
         for subfolder_path in session_folder_path.iterdir():
