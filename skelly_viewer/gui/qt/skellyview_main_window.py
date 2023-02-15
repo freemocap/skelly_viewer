@@ -66,6 +66,9 @@ class SkellyViewerMainWindow(QMainWindow):
             if subfolder_path.name == 'SyncedVideos':
                 return subfolder_path
 
+        raise Exception(f"Could not find a videos folder in path {str(session_folder_path)}")
+
+
 
     def _find_skeleton_npy_file_name(self, data_folder_name: Path) -> Path:
 
@@ -77,6 +80,8 @@ class SkellyViewerMainWindow(QMainWindow):
 
         if 'mediaPipeSkel_3d_origin_aligned.npy' in npy_path_list:
             return data_folder_name / 'mediaPipeSkel_3d_origin_aligned.npy'
+
+        raise Exception(f"Could not find a skeleton NPY file in path {str(data_folder_name)}")
 
 
 def main():
