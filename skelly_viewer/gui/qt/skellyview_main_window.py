@@ -3,7 +3,6 @@ from pathlib import Path
 from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QFileDialog, QMainWindow, QHBoxLayout
 
 from skelly_viewer import SkellyViewer
-from skelly_viewer.config.folder_directory import MEDIAPIPE_3D_BODY_FILE_NAME, DATA_FOLDER_NAME
 
 
 class SkellyViewerMainWindow(QMainWindow):
@@ -38,8 +37,8 @@ class SkellyViewerMainWindow(QMainWindow):
         if self._session_folder_path:
             self._session_folder_path = Path(self._session_folder_path)
             self._skelly_viewer.set_data_paths(
-                mediapipe_skeleton_npy_path=self._session_folder_path / DATA_FOLDER_NAME / MEDIAPIPE_3D_BODY_FILE_NAME,
-                video_folder_path=self._try_to_find_synchronized_videos_folder_path(self._session_folder_path)
+                mediapipe_skeleton_npy_path=self._find_skeleton_npy_file_name(self._find_data_folder_path(self._session_folder_path)),
+                video_folder_path=self._find_synchronized_videos_folder_path(self._session_folder_path)
             )
 
     # def open_video_folder_dialogue(self):
@@ -48,7 +47,15 @@ class SkellyViewerMainWindow(QMainWindow):
     #                                                               directory=str(self.session_folder_path))
     #     self.load_video_folder_from_path(self.video_folder_path)
 
-    def _try_to_find_synchronized_videos_folder_path(self, session_folder_path: Path) -> Path:
+    def _find_data_folder_path(self, session_folder_path: Path) -> Path:
+        for subfolder_path in session_folder_path.iterdir():
+            if subfolder_path.name == 'DataArrays':
+                return subfolder_path
+            if subfolder_path.name == 'output_data':
+                return subfolder_path
+
+
+    def _find_synchronized_videos_folder_path(self, session_folder_path: Path) -> Path:
         for subfolder_path in session_folder_path.iterdir():
             if subfolder_path.name == 'annotated_videos':
                 return subfolder_path
@@ -57,7 +64,18 @@ class SkellyViewerMainWindow(QMainWindow):
             if subfolder_path.name == 'SyncedVideos':
                 return subfolder_path
 
-        return
+
+    def _find_skeleton_npy_file_name(self, data_folder_name: Path) -> Path:
+
+        npy_path_list = [path.name for path in data_folder_name.glob("*.npy")]
+
+
+        if 'mediapipe_body_3d_xyz.npy' in npy_path_list:
+            return data_folder_name / 'mediapipe_body_3d_xyz.npy'
+
+        if 'mediaPipeSkel_3d_origin_aligned.npy' in npy_path_list:
+            return data_folder_name / 'mediaPipeSkel_3d_origin_aligned.npy'
+
 
 def main():
     app = QApplication([])
