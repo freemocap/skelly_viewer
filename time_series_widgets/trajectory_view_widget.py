@@ -12,7 +12,7 @@ from skelly_viewer.utils.mediapipe_skeleton_builder import mediapipe_indices
 
 import numpy as np
 
-class TrajectoryPlotCanvas(FigureCanvasQTAgg):
+class TimeSeriesPlotCanvas(FigureCanvasQTAgg):
 
     def __init__(self, parent=None, width=15, height=4, dpi=100):
         fig = Figure(figsize=(width, height), dpi=dpi)
@@ -20,9 +20,9 @@ class TrajectoryPlotCanvas(FigureCanvasQTAgg):
         self.y_ax = fig.add_subplot(312)
         self.z_ax = fig.add_subplot(313)
 
-        super(TrajectoryPlotCanvas, self).__init__(fig)
+        super(TimeSeriesPlotCanvas, self).__init__(fig)
 
-class TrajectoryViewWidget(QWidget):
+class TimeSeriesPlotterWidget(QWidget):
 
     def __init__(self):
         super().__init__()
@@ -38,7 +38,7 @@ class TrajectoryViewWidget(QWidget):
         self._layout.addWidget(self.fig)
 
     def initialize_skeleton_plot(self):
-        fig = TrajectoryPlotCanvas(self, width=15, height=10, dpi=100)
+        fig = TimeSeriesPlotCanvas(self, width=15, height=10, dpi=100)
         self.x_ax = fig.figure.axes[0]
         self.y_ax = fig.figure.axes[1]
         self.z_ax = fig.figure.axes[2]
