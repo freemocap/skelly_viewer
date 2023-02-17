@@ -47,6 +47,7 @@ class SkellyViewer(QWidget):
 
     def generate_video_display(self, video_folder_path: Union[str, Path]):
         self.multi_video_display.generate_video_display(video_folder_path)
+        self.multi_video_display.update_display(self._frame_count_slider._slider.value())
 
     def set_data_paths(self,
                        mediapipe_skeleton_npy_path: Union[str, Path],
