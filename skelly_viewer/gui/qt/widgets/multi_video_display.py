@@ -48,6 +48,9 @@ class MultiVideoDisplay(QWidget):
         scaled_width = int(image_label_widget_width * .95)
         scaled_height = int(image_label_widget_height * .95)
 
+        scaled_width = image_label_widget_width
+        scaled_height = image_label_widget_height
+
         q_image = q_image.scaled(
             scaled_width,
             scaled_height,
@@ -74,7 +77,7 @@ class MultiVideoDisplay(QWidget):
         return self._video_handler_dictionary
 
 
-    def _create_image_label_widgets_for_videos(self, number_of_videos: int):
+    def _create_image_label_widgets_for_videos(self, number_of_videos: int) -> object:
         label_widget_dictionary = {}
         for video_number in range(number_of_videos):
             label_widget_dictionary[video_number] = QLabel(f'Video {video_number}')
