@@ -1,9 +1,11 @@
+import zipfile
 from pathlib import Path
 
 from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QFileDialog, QMainWindow, QHBoxLayout
 
 from skelly_viewer import SkellyViewer
-
+import requests
+import io
 
 class SkellyViewerMainWindow(QMainWindow):
     def __init__(self):
@@ -18,6 +20,8 @@ class SkellyViewerMainWindow(QMainWindow):
         self._folder_open_button = QPushButton('Load a session folder', self)
         self._folder_open_button.clicked.connect(self._open_session_folder_dialog)
 
+
+
         # self._video_folder_load_button = QPushButton('Load a folder of videos', self)
         # self._video_folder_load_button.setEnabled(False)
         # self._video_folder_load_button.clicked.connect(self.open_video_folder_dialogue)
@@ -27,6 +31,9 @@ class SkellyViewerMainWindow(QMainWindow):
         # hbox.addWidget(self._video_folder_load_button)
         self._layout.addLayout(hbox)
 
+        self._sample_data_loader_button = QPushButton('Load sample data', self)
+        self._sample_data_loader_button.clicked.connect(self._load_sample_data)
+        self._layout.addWidget(self._sample_data_loader_button)
 
         self._skelly_viewer = SkellyViewer()
         self._layout.addWidget(self._skelly_viewer)
@@ -82,6 +89,28 @@ class SkellyViewerMainWindow(QMainWindow):
             return data_folder_name / 'mediaPipeSkel_3d_origin_aligned.npy'
 
         raise Exception(f"Could not find a skeleton NPY file in path {str(data_folder_name)}")
+
+    def _load_sample_data(self):
+        zip_file_url = 'https://figshare.com/ndownloader/files/39369101'
+        sample_session_name = 'freemocap_sample_data'
+        sample_session_zip = sample_session_name + '.zip'
+
+        extract_to_path = Path.home()/'skellyviewer_data'
+        extract_to_path.mkdir(exist_ok=True)
+
+        sample_session_path = extract_to_path/sample_session_name
+
+        if not Path.exists(sample_session_path):
+            r = requests.get(zip_file_url)
+            z = zipfile.ZipFile(io.BytesIO(r.content))
+            z.extractall(extract_to_path)
+
+        self._skelly_viewer.set_data_paths(
+            mediapipe_skeleton_npy_path=self._find_skeleton_npy_file_name(
+                self._find_data_folder_path(sample_session_path)),
+            video_folder_path=self._find_synchronized_videos_folder_path(sample_session_path)
+            )
+
 
 
 def main():
