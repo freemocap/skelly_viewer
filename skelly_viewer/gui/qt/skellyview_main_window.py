@@ -1,11 +1,18 @@
 import zipfile
 from pathlib import Path
+from typing import Union
 
 from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QFileDialog, QMainWindow, QHBoxLayout
 
 from skelly_viewer import SkellyViewer
 import requests
 import io
+
+from skelly_viewer.config.folder_and_file_names import BASE_FOLDER_NAME, SAMPLE_DATA_FILE_NAME, \
+    MEDIAPIPE_3D_BODY_FILE_NAME, OUTPUT_DATA_FOLDER_NAME
+from skelly_viewer.utilities.freemocap_data_loader import FreeMoCapDataLoader
+from skelly_viewer.utilities.load_sample_data import load_sample_data
+
 
 class SkellyViewerMainWindow(QMainWindow):
     def __init__(self):
@@ -20,7 +27,9 @@ class SkellyViewerMainWindow(QMainWindow):
         self._folder_open_button = QPushButton('Load a session folder', self)
         self._folder_open_button.clicked.connect(self._open_session_folder_dialog)
 
-
+        self._sample_data_loader_button = QPushButton('Load sample data', self)
+        self._sample_data_loader_button.clicked.connect(lambda: self._load_data(path=load_sample_data()))
+        self._layout.addWidget(self._sample_data_loader_button)
 
         # self._video_folder_load_button = QPushButton('Load a folder of videos', self)
         # self._video_folder_load_button.setEnabled(False)
@@ -31,22 +40,16 @@ class SkellyViewerMainWindow(QMainWindow):
         # hbox.addWidget(self._video_folder_load_button)
         self._layout.addLayout(hbox)
 
-        self._sample_data_loader_button = QPushButton('Load sample data', self)
-        self._sample_data_loader_button.clicked.connect(self._load_sample_data)
-        self._layout.addWidget(self._sample_data_loader_button)
+
 
         self._skelly_viewer = SkellyViewer()
         self._layout.addWidget(self._skelly_viewer)
 
     def _open_session_folder_dialog(self):
-        self._session_folder_path = QFileDialog.getExistingDirectory(None, "Choose a session")
+        folder_path = QFileDialog.getExistingDirectory(None, "Choose a FreeMoCap recording folder",)
 
-        if self._session_folder_path:
-            self._session_folder_path = Path(self._session_folder_path)
-            self._skelly_viewer.set_data_paths(
-                mediapipe_skeleton_npy_path=self._find_skeleton_npy_file_name(self._find_data_folder_path(self._session_folder_path)),
-                video_folder_path=self._find_synchronized_videos_folder_path(self._session_folder_path)
-            )
+        if folder_path:
+            self._load_data(path=folder_path)
 
     # def open_video_folder_dialogue(self):
     #     self.folder_diag = QFileDialog()
@@ -54,63 +57,14 @@ class SkellyViewerMainWindow(QMainWindow):
     #                                                               directory=str(self.session_folder_path))
     #     self.load_video_folder_from_path(self.video_folder_path)
 
-    def _find_data_folder_path(self, session_folder_path: Path) -> Path:
-        for subfolder_path in session_folder_path.iterdir():
-            if subfolder_path.name == 'DataArrays':
-                return subfolder_path
-            if subfolder_path.name == 'output_data':
-                return subfolder_path
-
-        raise Exception(f"Could not find a data folder in path {str(session_folder_path)}")
-
-
-    def _find_synchronized_videos_folder_path(self, session_folder_path: Path) -> Path:
-        for subfolder_path in session_folder_path.iterdir():
-            if subfolder_path.name == 'annotated_videos':
-                return subfolder_path
-            if subfolder_path.name == 'synchronized_videos':
-                return subfolder_path
-            if subfolder_path.name == 'SyncedVideos':
-                return subfolder_path
-
-        raise Exception(f"Could not find a videos folder in path {str(session_folder_path)}")
-
-
-
-    def _find_skeleton_npy_file_name(self, data_folder_name: Path) -> Path:
-
-        npy_path_list = [path.name for path in data_folder_name.glob("*.npy")]
-
-
-        if 'mediapipe_body_3d_xyz.npy' in npy_path_list:
-            return data_folder_name / 'mediapipe_body_3d_xyz.npy'
-
-        if 'mediaPipeSkel_3d_origin_aligned.npy' in npy_path_list:
-            return data_folder_name / 'mediaPipeSkel_3d_origin_aligned.npy'
-
-        raise Exception(f"Could not find a skeleton NPY file in path {str(data_folder_name)}")
-
-    def _load_sample_data(self):
-        zip_file_url = 'https://figshare.com/ndownloader/files/39369101'
-        sample_session_name = 'freemocap_sample_data'
-        sample_session_zip = sample_session_name + '.zip'
-
-        extract_to_path = Path.home()/'skellyviewer_data'
-        extract_to_path.mkdir(exist_ok=True)
-
-        sample_session_path = extract_to_path/sample_session_name
-
-        if not Path.exists(sample_session_path):
-            r = requests.get(zip_file_url)
-            z = zipfile.ZipFile(io.BytesIO(r.content))
-            z.extractall(extract_to_path)
+    def _load_data(self, path: Union[Path, str]):
+        self._session_folder_path = Path(path)
+        data_loader = FreeMoCapDataLoader(path_to_session_folder=self._session_folder_path)
 
         self._skelly_viewer.set_data_paths(
-            mediapipe_skeleton_npy_path=self._find_skeleton_npy_file_name(
-                self._find_data_folder_path(sample_session_path)),
-            video_folder_path=self._find_synchronized_videos_folder_path(sample_session_path)
-            )
-
+            mediapipe_skeleton_npy_path=data_loader.find_skeleton_npy_file_name(),
+            video_folder_path=data_loader.find_synchronized_videos_folder_path()
+        )
 
 
 def main():

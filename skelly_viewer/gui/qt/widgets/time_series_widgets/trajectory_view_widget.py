@@ -1,13 +1,13 @@
 
-from PyQt6.QtWidgets import QWidget,QVBoxLayout
-
 import matplotlib
+from PyQt6.QtWidgets import QWidget, QVBoxLayout
+
 matplotlib.use('Qt5Agg')
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 
-from skelly_viewer.utils.mediapipe_skeleton_builder import mediapipe_indices
+from skelly_viewer.utilities.mediapipe_skeleton_builder import mediapipe_indices
 
 
 import numpy as np
@@ -69,6 +69,3 @@ class TimeSeriesPlotterWidget(QWidget):
             ax.legend()
 
         self.fig.figure.canvas.draw_idle()
-
-
-

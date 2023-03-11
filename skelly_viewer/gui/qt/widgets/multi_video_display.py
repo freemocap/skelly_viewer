@@ -5,7 +5,7 @@ from typing import Union
 import numpy as np
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QImage, QPixmap
-from PyQt6.QtWidgets import QWidget, QLabel, QVBoxLayout, QPushButton, QFileDialog, QGridLayout, QSizePolicy
+from PyQt6.QtWidgets import QWidget, QLabel, QVBoxLayout, QGridLayout, QSizePolicy
 
 from skelly_viewer.utilities.video_handler import VideoHandler
 
@@ -34,13 +34,14 @@ class MultiVideoDisplay(QWidget):
         for video_handler, image_label_widget in zip(self._video_handler_dictionary.values(),
                                                      self._image_label_widget_dictionary.values()):
             image = video_handler.get_image_for_frame_number(frame_number)
-            pixmap = self._set_pixmap_from_image(image_label_widget, image)
+            self._set_pixmap_from_image(image_label_widget, image)
 
 
     def _set_pixmap_from_image(self,
                                image_label_widget:QLabel,
                                         image:np.ndarray):
         q_image = self._convert_image_to_qimage(image)
+        pixmap = QPixmap.fromImage(q_image)
 
         image_label_widget_width = image_label_widget.width()
         image_label_widget_height = image_label_widget.height()
@@ -51,13 +52,13 @@ class MultiVideoDisplay(QWidget):
         scaled_width = image_label_widget_width
         scaled_height = image_label_widget_height
 
-        q_image = q_image.scaled(
+        pixmap = pixmap.scaled(
             scaled_width,
             scaled_height,
             Qt.AspectRatioMode.KeepAspectRatio,
             Qt.TransformationMode.SmoothTransformation, )
 
-        image_label_widget.setPixmap(QPixmap.fromImage(q_image))
+        image_label_widget.setPixmap(pixmap)
 
     def _convert_image_to_qimage(self, image: np.ndarray):
         return QImage(
@@ -81,7 +82,7 @@ class MultiVideoDisplay(QWidget):
         label_widget_dictionary = {}
         for video_number in range(number_of_videos):
             label_widget_dictionary[video_number] = QLabel(f'Video {video_number}')
-            label_widget_dictionary[video_number].setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+            label_widget_dictionary[video_number].setMinimumSize(200, 200)
         return label_widget_dictionary
 
     def _add_widgets_to_layout(self):
@@ -95,4 +96,14 @@ class MultiVideoDisplay(QWidget):
             if column_count % MAX_COLUMN_COUNT == 0:
                 column_count = 0
                 row_count += 1
+
+
+if __name__ == '__main__':
+    import sys
+    from PyQt6.QtWidgets import QApplication
+
+    app = QApplication(sys.argv)
+    window = MultiVideoDisplay()
+    window.show()
+    sys.exit(app.exec())
 

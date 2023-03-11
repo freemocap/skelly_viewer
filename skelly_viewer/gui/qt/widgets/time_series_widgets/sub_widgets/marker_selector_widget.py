@@ -1,8 +1,8 @@
 
-from skelly_viewer.utils.mediapipe_skeleton_builder import mediapipe_indices
-
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QComboBox
 from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QComboBox
+
+from skelly_viewer.utilities.mediapipe_skeleton_builder import mediapipe_indices
 
 
 class MarkerSelectorWidget(QWidget):
@@ -27,5 +27,3 @@ class MarkerSelectorWidget(QWidget):
         self.marker_to_plot_updated_signal.emit()
 
         return self.current_marker
-
-

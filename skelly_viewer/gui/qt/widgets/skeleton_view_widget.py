@@ -1,13 +1,15 @@
 from typing import Union
 
-import matplotlib
+
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import QWidget, QVBoxLayout
 
-from skelly_viewer.utils.mediapipe_skeleton_builder import build_skeleton, mediapipe_indices, mediapipe_connections
+from skelly_viewer.utilities.mediapipe_skeleton_builder import build_skeleton, mediapipe_indices, mediapipe_connections
+
+
+import matplotlib
 
 matplotlib.use('Qt5Agg')
-
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 
@@ -39,9 +41,10 @@ class SkeletonViewWidget(QWidget):
         self.skeleton_data_loaded_signal.emit()
 
     def initialize_skeleton_plot(self):
-        figure = Mpl3DPlotCanvas(self, width=5, height=4, dpi=100)
-        axes = figure.figure.axes[0]
-        return figure, axes
+        figure_widget = Mpl3DPlotCanvas(parent=self)
+        figure_widget.setMinimumSize(100, 100)
+        axes = figure_widget.figure.axes[0]
+        return figure_widget, axes
 
     def _initialize_3d_axes(self):
         self._3d_axes.cla()
@@ -61,7 +64,7 @@ class SkeletonViewWidget(QWidget):
         self._axes_3d_range = 1000
 
     def _plot_skeleton(self, frame_number, skeleton_points_x, skeleton_points_y, skeleton_points_z):
-        self._3d_axes.scatter(skeleton_points_x, skeleton_points_y, skeleton_points_z)
+        self._3d_axes.scatter(skeleton_points_x, skeleton_points_y, skeleton_points_z, 'ko', s=1)
         self._plot_skeleton_bones(frame_number)
         self._3d_axes.set_xlim(
             [self._data_midpoint_x - self._axes_3d_range, self._data_midpoint_x + self._axes_3d_range])

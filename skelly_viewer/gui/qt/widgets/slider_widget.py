@@ -37,14 +37,14 @@ class PlayPauseCountSlider(QWidget):
         self._play_button = QSliderButton("Play")
         self._play_button.clicked.connect(self._play_button_clicked)
         hbox.addWidget(self._play_button)
-
-        self._play_double_speed_button = QSliderButton("Play x2")
-        self._play_button.clicked.connect(self._play_double_speed_button_clicked)
-        hbox.addWidget(self._play_double_speed_button)
-
-        self._play_half_speed_button = QSliderButton("Play x1/2")
-        self._play_button.clicked.connect(self._play_half_speed_button_clicked)
-        hbox.addWidget(self._play_half_speed_button)
+        #
+        # self._play_double_speed_button = QSliderButton("Play x2")
+        # self._play_button.clicked.connect(self._play_double_speed_button_clicked)
+        # hbox.addWidget(self._play_double_speed_button)
+        #
+        # self._play_half_speed_button = QSliderButton("Play x1/2")
+        # self._play_button.clicked.connect(self._play_half_speed_button_clicked)
+        # hbox.addWidget(self._play_half_speed_button)
 
         self._pause_button = QSliderButton("Pause")
         self._pause_button.clicked.connect(self._pause_button_clicked)
@@ -79,7 +79,8 @@ class PlayPauseCountSlider(QWidget):
     @pyqtSlot()
     def _play_button_clicked(self):
         self._timer.stop()
-        self._timer.start(int(self.frame_duration))
+        # self._timer.start(int(self.frame_duration))
+        self._timer.start(0) #play as fast as possible
 
     @pyqtSlot()
     def _play_double_speed_button_clicked(self):

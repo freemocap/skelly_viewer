@@ -1,11 +1,9 @@
-
-from pathlib import Path
 import numpy as np
+from PyQt6.QtWidgets import QMainWindow, QWidget, QApplication, QVBoxLayout
 
-from PyQt6.QtWidgets import QMainWindow, QWidget, QApplication, QHBoxLayout,QVBoxLayout
+from skelly_viewer.gui.qt.widgets.time_series_widgets.sub_widgets.marker_selector_widget import MarkerSelectorWidget
+from skelly_viewer.gui.qt.widgets.time_series_widgets.trajectory_view_widget import TimeSeriesPlotterWidget
 
-from time_series_widgets.trajectory_view_widget import TimeSeriesPlotterWidget
-from time_series_widgets.marker_selector_widget import MarkerSelectorWidget
 
 class TimeSeriesViewer(QWidget):
     def __init__(self, freemocap_data:np.ndarray):
@@ -46,8 +44,8 @@ if __name__ == "__main__":
             self.setCentralWidget(widget)
 
 
-    path_to_freemocap_session_folder = Path(r'D:\ValidationStudy2022\FreeMocap_Data\sesh_2022-05-24_15_55_40_JSM_T1_BOS')
-    freemocap_data = np.load(path_to_freemocap_session_folder/'DataArrays'/'mediaPipeSkel_3d_origin_aligned.npy')
+    path_to_mediapipe_npy_file = r"C:\Users\jonma\freemocap_data\recording_sessions\session_2023-02-15_08_46_43_wud\recording_08_47_25_gmt-5_wud\output_data\raw_data\mediapipe3dData_numFrames_numTrackedPoints_spatialXYZ.npy"
+    freemocap_data = np.load(path_to_mediapipe_npy_file)
 
     app = QApplication([])
     win = MainWindow(freemocap_data)
