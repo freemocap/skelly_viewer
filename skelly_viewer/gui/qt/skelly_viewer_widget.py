@@ -1,80 +1,78 @@
+import zipfile
 from pathlib import Path
 from typing import Union
 
-from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout
+from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QFileDialog, QMainWindow, QHBoxLayout
 
-from skelly_viewer.gui.qt.widgets.multi_video_display import MultiVideoDisplay
-from skelly_viewer.gui.qt.widgets.skeleton_view_widget import SkeletonViewWidget
-from skelly_viewer.gui.qt.widgets.slider_widget import PlayPauseCountSlider
+from skelly_viewer import SkellyViewer
+import requests
+import io
+
+from skelly_viewer.config.folder_and_file_names import BASE_FOLDER_NAME, SAMPLE_DATA_FILE_NAME, \
+    MEDIAPIPE_3D_BODY_FILE_NAME, OUTPUT_DATA_FOLDER_NAME
+from skelly_viewer.utilities.freemocap_data_loader import FreeMoCapDataLoader
+from skelly_viewer.utilities.load_sample_data import load_sample_data
 
 
-class SkellyViewer(QWidget):
-    # session_folder_loaded_signal = pyqtSignal()
-    def __init__(self, mediapipe_skeleton_npy_path=None, video_folder_path=None):
+class SkellyViewerMainWindow(QMainWindow):
+    def __init__(self):
         super().__init__()
+        self.setWindowTitle('Skelly Viewer \U0001F480 \U0001F440')
+        self.setGeometry(100, 100, 1200, 600)
+        widget = QWidget()
+        self._layout = QVBoxLayout()
+        widget.setLayout(self._layout)
+        self.setCentralWidget(widget)
 
-        layout = QVBoxLayout()
-        self.setLayout(layout)
-        layout.setAlignment(Qt.AlignmentFlag.AlignBottom)
+        hbox = QHBoxLayout()
+        self._layout.addLayout(hbox)
 
-        skeleton_and_videos_layout = QHBoxLayout()
-        skeleton_and_videos_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self._folder_open_button = QPushButton('Load a session folder', self)
+        self._folder_open_button.clicked.connect(self._open_session_folder_dialog)
+        hbox.addWidget(self._folder_open_button)
 
-        self._skeleton_view_widget = SkeletonViewWidget()
-        self._skeleton_view_widget.setFixedSize(self._skeleton_view_widget.size())
-        skeleton_and_videos_layout.addWidget(self._skeleton_view_widget)
-        layout.addLayout(skeleton_and_videos_layout)
+        self._sample_data_loader_button = QPushButton('Load sample data', self)
+        self._sample_data_loader_button.clicked.connect(lambda: self._load_data(path=load_sample_data()))
+        hbox.addWidget(self._sample_data_loader_button)
 
-        self.multi_video_display = MultiVideoDisplay()
-        # self.multi_video_display.setFixedSize(self.skeleton_view_widget.size()*1.5)
-        skeleton_and_videos_layout.addWidget(self.multi_video_display)
+        self._toggle_video_display_button = QPushButton('Toggle Video Display', self)
+        self._toggle_video_display_button.clicked.connect(self._toggle_video_display)
+        hbox.addWidget(self._toggle_video_display_button)
 
-        self._frame_count_slider = PlayPauseCountSlider()
-        self._frame_count_slider.setEnabled(False)
-        layout.addWidget(self._frame_count_slider)
+        self._skelly_viewer = SkellyViewer()
+        self._layout.addWidget(self._skelly_viewer)
 
-        self.connect_signals_to_slots()
+    def _toggle_video_display(self):
+        self._skelly_viewer.toggle_video_display()
+        
+    def _open_session_folder_dialog(self):
+        folder_path = QFileDialog.getExistingDirectory(None, "Choose a FreeMoCap recording folder",)
 
-        self._is_video_display_enabled = True
+        if folder_path:
+            self._load_data(path=folder_path)
 
-        if mediapipe_skeleton_npy_path is not None:
-            self.load_skeleton_data(mediapipe_skeleton_npy_path)
+    # def open_video_folder_dialogue(self):
+    #     self.folder_diag = QFileDialog()
+    #     self.video_folder_path = QFileDialog.getExistingDirectory(None, "Choose a folder of videos",
+    #                                                               directory=str(self.session_folder_path))
+    #     self.load_video_folder_from_path(self.video_folder_path)
 
-        if video_folder_path is not None:
-            self.generate_video_display(video_folder_path)
+    def _load_data(self, path: Union[Path, str]):
+        self._session_folder_path = Path(path)
+        data_loader = FreeMoCapDataLoader(path_to_session_folder=self._session_folder_path)
 
-    def load_skeleton_data(self, mediapipe_skeleton_npy_path: Union[str, Path]):
-        self._skeleton_view_widget.load_skeleton_data(mediapipe_skeleton_npy_path)
+        self._skelly_viewer.set_data_paths(
+            mediapipe_skeleton_npy_path=data_loader.find_skeleton_npy_file_name(),
+            video_folder_path=data_loader.find_synchronized_videos_folder_path()
+        )
 
-    def generate_video_display(self, video_folder_path: Union[str, Path]):
-        self.multi_video_display.generate_video_display(video_folder_path)
-        self.multi_video_display.update_display(self._frame_count_slider._slider.value())
 
-    def set_data_paths(self,
-                       mediapipe_skeleton_npy_path: Union[str, Path],
-                       video_folder_path: Union[str, Path]):
+def main():
+    app = QApplication([])
+    win = SkellyViewerMainWindow()
+    win.show()
+    app.exec()
 
-        self.load_skeleton_data(mediapipe_skeleton_npy_path)
-        self.generate_video_display(video_folder_path)
 
-        self._frame_count_slider._slider.setValue(0)
-
-    def connect_signals_to_slots(self):
-        self._skeleton_view_widget.skeleton_data_loaded_signal.connect(
-            self._handle_data_loaded_signal)
-
-        self._frame_count_slider._slider.valueChanged.connect(self._handle_slider_value_changed)
-
-    def _handle_data_loaded_signal(self):
-        self._frame_count_slider.set_slider_range(self._skeleton_view_widget._number_of_frames)
-        self._frame_count_slider.setEnabled(True)
-
-    def _handle_slider_value_changed(self):
-        self._skeleton_view_widget.update_skeleton_plot(self._frame_count_slider._slider.value())
-        if self._is_video_display_enabled:
-            self.multi_video_display.update_display(self._frame_count_slider._slider.value())
-
-    def toggle_video_display(self):
-        self._is_video_display_enabled = not self._is_video_display_enabled
-        self.multi_video_display.setVisible(self._is_video_display_enabled)
+if __name__ == "__main__":
+    main()
