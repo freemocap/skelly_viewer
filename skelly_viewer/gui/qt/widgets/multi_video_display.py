@@ -56,7 +56,7 @@ class MultiVideoDisplay(QWidget):
         self._add_widgets_to_layout()
 
         self.update_worker.video_handlers = list(self._video_handler_dictionary.values())
-        self.update_worker.updated.connect(self._update_display)
+        self.update_worker.updated.connect(self.update_display)
 
     def start_update_worker(self):
         self.update_worker.start()
@@ -64,9 +64,7 @@ class MultiVideoDisplay(QWidget):
     def stop_update_worker(self):
         self.update_worker.terminate()
 
-    def _update_display(self, image, video_number):
-        image_label_widget = self._image_label_widget_dictionary[video_number]
-        self._set_pixmap_from_image(image_label_widget, image)
+
 
     def _add_widgets_to_layout(self):
         column_count = 0
@@ -82,14 +80,15 @@ class MultiVideoDisplay(QWidget):
 
     def update_display(self, frame_number: int):
         # logger.debug(f"Updating video display to frame#{frame_number}")
-        for video_handler, image_label_widget in zip(self._video_handler_dictionary.values(),
+        try:
+            for video_handler, image_label_widget in zip(self._video_handler_dictionary.values(),
                                                      self._image_label_widget_dictionary.values()):
-            try:
                 image = video_handler.get_image_for_frame_number(frame_number)
                 self._set_pixmap_from_image(image_label_widget, image)
-            except Exception as e:
-                logger.warning(f"Error updating display for video {video_handler.video_path.name}: {e}")
-                
+
+        except Exception as e:
+            logger.warning(f"Error updating display for video {video_handler.video_path.name}: {e}")
+
     def _set_pixmap_from_image(self,
                                image_label_widget: QLabel,
                                image: np.ndarray):
