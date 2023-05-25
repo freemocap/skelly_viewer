@@ -84,9 +84,12 @@ class MultiVideoDisplay(QWidget):
         # logger.debug(f"Updating video display to frame#{frame_number}")
         for video_handler, image_label_widget in zip(self._video_handler_dictionary.values(),
                                                      self._image_label_widget_dictionary.values()):
-            image = video_handler.get_image_for_frame_number(frame_number)
-            self._set_pixmap_from_image(image_label_widget, image)
-
+            try:
+                image = video_handler.get_image_for_frame_number(frame_number)
+                self._set_pixmap_from_image(image_label_widget, image)
+            except Exception as e:
+                logger.warning(f"Error updating display for video {video_handler.video_path.name}: {e}")
+                
     def _set_pixmap_from_image(self,
                                image_label_widget: QLabel,
                                image: np.ndarray):
