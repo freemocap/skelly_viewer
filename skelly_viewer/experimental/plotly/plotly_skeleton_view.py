@@ -1,12 +1,14 @@
 import json
+import logging
 from pathlib import Path
 from typing import Union
 
 import pandas as pd
 import plotly.graph_objects as go
-from dash import Dash
-from dash import dcc, html
+from dash import dcc, html, Dash, Output, Input
 
+# Silence the werkzeug logger
+logging.getLogger('werkzeug').setLevel(logging.WARNING)
 
 class DataLoader:
     def __init__(self, recording_folder_path: Union[str, Path]):
@@ -48,7 +50,6 @@ class FrameCreator:
             ],
             name=str(frame_number)
         )
-
     @staticmethod
     def create_frames(data_by_frame):
         frames = []
@@ -86,8 +87,8 @@ class DashAppCreator:
     def create_dash_app(figure):
         app = Dash(__name__)
         app.layout = html.Div([
-            dcc.Graph(figure=figure, style={'height': '800px', 'width': '100%'})
-        ], style={'height': '800px', 'width': '100%'})
+            dcc.Graph(id='animation-graph', figure=figure, style={'height': '100%', 'width': '100%'})
+        ], style={'height': '100%', 'width': '100%'})
 
         return app
 
@@ -119,7 +120,6 @@ class WidgetManager:
         WidgetManager.add_button(layout, 'Play', 'animate', [None, {"frame": {"duration": 30}}])
         # You can add more buttons, sliders, etc here.
 
-
 class SkeletonViewer:
     def __init__(self, recording_folder_path: Union[str, Path]):
         self.recording_folder_path = Path(recording_folder_path)
@@ -134,18 +134,39 @@ class SkeletonViewer:
 
     def create_app(self):
         data_by_frame = self.data_loader.load_data_by_frame()
-        frames = FrameCreator.create_frames(data_by_frame)
+        self.frames = FrameCreator.create_frames(data_by_frame)
 
         updatemenus = []
         WidgetManager.add_widgets(updatemenus)
 
         figure_creator = FigureCreator(self.axis_props, self.ax_range, updatemenus)
-        fig = figure_creator.create_figure(frames)
+        fig = figure_creator.create_figure(self.frames)
 
         app = DashAppCreator.create_dash_app(fig)
 
-        return app
+        app.layout.children.append(
+            dcc.Slider(
+                id='frame-slider',
+                min=0,
+                max=len(self.frames) - 1,
+                value=0,
+                step=1,
+                marks={i: str(i) for i in range(len(self.frames))},
+            )
+        )
 
+        @app.callback(
+            Output('animation-graph', 'figure'),
+            [Input('frame-slider', 'value')])
+        def update_figure(selected_frame):
+            new_figure = go.Figure(data=self.frames[selected_frame]['data'])
+            new_figure.update_layout(fig.layout)
+            new_figure['layout']['scene']['camera']['eye'] = fig['layout']['scene']['camera']['eye']
+            new_figure.layout.updatemenus[0].buttons[0].args[1]['frame']['name'] = self.frames[selected_frame][
+                'name']  # Update the frame
+            return new_figure
+
+        return app
 
 if __name__ == "__main__":
     recording_folder_path = r"C:\Users\jonma\freemocap_data\recording_sessions\freemocap_sample_data"
