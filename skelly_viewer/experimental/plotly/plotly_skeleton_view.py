@@ -35,21 +35,28 @@ class SkeletonViewer:
     def create_frames(self):
         frames = []
         for frame_number, frame_data in self.data_by_frame.items():
-            body = frame_data["body"]
-            x_data = [point["x"] for point in body.values()]
-            y_data = [point["y"] for point in body.values()]
-            z_data = [point["z"] for point in body.values()]
-            frames.append(self.create_frame(x_data, y_data, z_data, frame_number))
+
+            frames.append(self.create_frame(frame_number, frame_data))
         return frames
 
-    def create_frame(self, x_data, y_data, z_data, frame_number):
+    def create_frame(self, frame_number, frame_data):
+
+        center_of_mass = frame_data["center_of_mass"]["full_body_com"]
+        body = frame_data["body"]
+        body_names = list(body.keys())
         return go.Frame(data=[
                 go.Scatter3d(
-                    x=x_data,
-                    y=y_data,
-                    z=z_data,
+                    x=[point["x"] for point in body.values()],
+                    y=[point["y"] for point in body.values()],
+                    z=[point["z"] for point in body.values()],
                     mode='markers',
-                    marker=dict(size=2)
+                    marker=dict(
+                        size=3,
+                        color='purple',
+                        colorscale='Viridis',  # choose a colorscale
+                    ),
+                    ids=body_names,
+
                 )
             ],
             name=str(frame_number)
