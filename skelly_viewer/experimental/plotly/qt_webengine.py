@@ -5,7 +5,7 @@ from PyQt6.QtCore import QUrl
 from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtWidgets import QMainWindow, QApplication
 
-from skelly_viewer.experimental.plotly.plotly_skeleton_view import SkeletonViewer
+from skelly_viewer.experimental.plotly.skeleton_viewer import SkeletonViewer
 
 
 class ViewerApp(QMainWindow):
