@@ -21,11 +21,20 @@ classifiers = [
 ] #additional classifiers can be found here: https://pypi.org/classifiers/
 
 keywords = ["basic",
-            "template",
-            "python",
-            "repository"] #change these to your project keywords
+    "template",
+    "python",
+    "repository"] #change these to your project keywords
 
-dependencies = ["pytest","numpy","rich", "PyQt6", 'opencv-contrib-python',"pandas","matplotlib", "requests"] #add additional dependencies here - try to pin versions as minimally as possible
+dependencies = ["pytest",
+    "numpy",
+    "rich",
+    "PyQt6",
+    'opencv-contrib-python',
+    "pandas",
+    "matplotlib",
+    "requests",
+    "plotly==5.14.1",
+    "dash==2.10.2"]
 
 requires-python = ">=3.8"
 
@@ -37,10 +46,10 @@ dev = ["black", "bumpver", "isort", "pip-tools", "pytest"]
 [tool.bumpver] #bump the version by entering `bumpver update` in the terminal
 current_version = "v2023.05.1019"
 version_pattern = "vYYYY.0M.BUILD[-TAG]"
-commit_message  = "Bump version {old_version} -> {new_version}"
-commit          = true
-tag             = true
-push            = true
+commit_message = "Bump version {old_version} -> {new_version}"
+commit = true
+tag = true
+push = true
 
 [tool.bumpver.file_patterns]
 "pyproject.toml" = ["{version}"]
