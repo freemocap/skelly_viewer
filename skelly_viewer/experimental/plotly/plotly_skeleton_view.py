@@ -4,6 +4,7 @@ from typing import Union, Dict
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 class SkeletonViewer:
     def __init__(self, recording_folder_path: Union[str, Path]):
@@ -55,28 +56,30 @@ class SkeletonViewer:
         )
 
     def create_figure(self, frames):
-        # Create a figure
-        fig = go.Figure(
-            data=frames[0]['data'],
-            layout=go.Layout(
-                scene=dict(
-                    xaxis=dict(self.axis_props, range=[-self.ax_range, self.ax_range]),
-                    yaxis=dict(self.axis_props, range=[-self.ax_range, self.ax_range]),
-                    zaxis=dict(self.axis_props, range=[-self.ax_range, self.ax_range]),
-                    aspectmode='cube'
-                ),
-                updatemenus=[dict(
-                    type='buttons',
-                    showactive=False,
-                    buttons=[dict(
-                        label='Play',
-                        method='animate',
-                        args=[None, {"frame": {"duration": 30}}]
-                    )]
-                )]
+        # Create a figure with subplots
+        fig = make_subplots(rows=1, cols=2, specs=[[{'type': 'scatter3d'}, {}]])
+
+        fig.add_trace(frames[0]['data'][0], row=1, col=1)
+
+        fig.update_layout(
+            scene=dict(
+                xaxis=dict(self.axis_props, range=[-self.ax_range, self.ax_range]),
+                yaxis=dict(self.axis_props, range=[-self.ax_range, self.ax_range]),
+                zaxis=dict(self.axis_props, range=[-self.ax_range, self.ax_range]),
+                aspectmode='cube'
             ),
-            frames=frames
+            updatemenus=[dict(
+                type='buttons',
+                showactive=False,
+                buttons=[dict(
+                    label='Play',
+                    method='animate',
+                    args=[None, {"frame": {"duration": 30}}]
+                )]
+            )]
         )
+
+        fig.frames = frames
         return fig
 
     def plotly_skeleton_view(self):
