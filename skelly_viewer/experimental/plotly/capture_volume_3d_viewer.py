@@ -9,10 +9,10 @@ from skelly_viewer.experimental.plotly.plotly_dash_setup import DataLoader, Fram
 SAMPLE_DATA_PATH = r"C:\Users\jonma\freemocap_data\recording_sessions\freemocap_sample_data"
 
 
-class SkeletonViewer:
+class CaptureVolume3dViewer:
     def __init__(self, recording_folder_path: Union[str, Path]):
         self.recording_folder_path = Path(recording_folder_path)
-        self.ax_range = 5000
+        self.ax_range = 2500
         self.axis_props = dict(
             showbackground=True,
             backgroundcolor="rgb(230, 230,230)",
@@ -91,7 +91,12 @@ class SkeletonViewer:
         def update_figure(selected_frame, existing_figure):
             new_figure = go.Figure(data=self.frames[selected_frame]['data'],
                                    layout=existing_figure['layout'])
-            new_figure['layout']['scene']['camera']['eye'] = existing_figure['layout']['scene']['camera']['eye']
+            try:
+                new_figure['layout']['scene']['camera']['eye'] = existing_figure['layout']['scene']['camera']['eye']
+            except KeyError:
+                # Camera key does not exist, setting a default value
+                new_figure['layout']['scene']['camera'] = dict(eye=dict(x=1.25, y=1.25, z=1.25))
+
             new_figure.layout.updatemenus[0].buttons[0].args[1]['frame']['name'] = self.frames[selected_frame][
                 'name']  # Update the frame
             return new_figure
@@ -118,6 +123,6 @@ class SkeletonViewer:
 
 if __name__ == "__main__":
     recording_folder_path = SAMPLE_DATA_PATH
-    viewer = SkeletonViewer(recording_folder_path)
+    viewer = CaptureVolume3dViewer(recording_folder_path)
     app = viewer.create_app()
     app.run_server(debug=True)
