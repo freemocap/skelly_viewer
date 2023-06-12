@@ -46,7 +46,7 @@ function App() {
             meshRef.current[i].position.set(point.x, point.y, point.z);
           });
         });
-    }, 1000 / 3);  // Update at 30 FPS
+    }, 1000 / 30);  // Update at 30 FPS
   }, []);
 
   return (
