@@ -23,7 +23,7 @@ class DataLoader:
 
         with open(file_path, "r") as f:
             data = json.load(f)
-        return data["data_by_frame"]
+        return data
 
     def get_frame_data(self, frame_number: Union[int, str] = None):
         if frame_number is None:

@@ -146,7 +146,8 @@ class CaptureVolume3dViewer:
 
     def load_data(self):
         data_by_frame = self.data_loader.load_data_by_frame()
-        self.frames = FrameCreator.create_frames(data_by_frame)
+        self._info = data_by_frame['info']
+        self.frames = FrameCreator.create_frames(data_by_frame['data_by_frame'])
 
     def create_app(self):
         self.load_data()
