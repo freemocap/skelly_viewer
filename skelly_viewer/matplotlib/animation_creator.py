@@ -25,34 +25,20 @@ class AnimationCreator:
         self.recording_name = Path(recording_path).name
 
         if frame_range:
-            self.frames = np.arange(frame_range[0], frame_range[1] + 1).tolist()
+            self.frame_numbers = list(np.arange(frame_range[0], frame_range[1] + 1))
             self.output_file = Path(recording_path) / f"{self.recording_name}_animation_frames_{frame_range[0]}-{frame_range[1]}.mp4"
 
         else:
-            self.frames = np.arange(data_loader.number_of_frames).tolist()
+            self.frame_numbers = np.arange(data_loader.number_of_frames).tolist()
             self.output_file = Path(recording_path) / f"{self.recording_name}_animation.mp4"
 
         self.figure_maker = FigureMaker(data_loader=data_loader,
-                                        frames=self.frames)
+                                        frames=self.frame_numbers)
 
 
-        self.animation = animation.FuncAnimation(fig=self.figure_maker.figure,
-                                                 func=self.update_figure,
-                                                 frames=self.frames,
-                                                 interval=FRAME_INTERVAL,
-                                                 blit=False)
-
-        self.animation_running = True
-        self.animation.event_source.stop()  # Initially stop the animation
 
 
-    def toggle_animation(self):
-        if self.animation_running:
-            self.animation.event_source.stop()
-            self.animation_running = False
-        else:
-            self.animation.event_source.start()
-            self.animation_running = True
+
 
     def update_figure(self, frame_number: Union[str, int]):
         # If the states have been stored, apply them in each frame
@@ -60,9 +46,21 @@ class AnimationCreator:
         self.figure_maker.figure.suptitle(f"{self.recording_name} - Frame {frame_number}")
         self.figure_maker.update_figure(frame_number=frame_number)
 
+    def show_middle_frame(self):
+        # Calculate the middle frame number
+        middle_frame_number = len(self.frame_numbers) // 2
 
+        # Update the figure with the middle frame
+        self.update_figure(middle_frame_number)
 
-    def show(self):
+        # Display the figure
+        self.figure_maker.show()
+    def start_animation(self):
+        self.animation = animation.FuncAnimation(fig=self.figure_maker.figure,
+                                                 func=self.update_figure,
+                                                 frames=self.frame_numbers,
+                                                 interval=FRAME_INTERVAL,
+                                                 blit=False)
         self.figure_maker.show()
 
 
@@ -74,15 +72,15 @@ if __name__ == "__main__":
     SAMPLE_DATA_PATH = r"C:\Users\jonma\freemocap_data\recording_sessions\freemocap_sample_data"
 
     # recording_path_in = SAMPLE_DATA_PATH
-    recording_path_in = r"D:\Dropbox\FreeMoCapProject\freemocap_validation_data\2023-05-18-MDN-NIH-Walk\processed_freemocap_data\sesh_2023-05-17_13_37_32_MDN_treadmill_1"
+    recording_path_in = r"D:\Dropbox\FreeMoCapProject\freemocap_validation_data\2023-05-18-MDN-NIH-Walk\processed_freemocap_data\sesh_2023-05-17_15_36_03_MDN_OneLeg_Trial1"
 
     animator = AnimationCreator(recording_path=recording_path_in,
-                                frame_range=(100, 200)
+                                frame_range=(500, 1000)
                                 )
-
+    # animator.show_middle_frame()
 
     print("Showing animation...")
-    animator.show()
+    animator.start_animation()
 
     print("Saving animation...")
     animator.save()
