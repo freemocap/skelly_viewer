@@ -43,11 +43,21 @@ class AnimationCreator:
                                           video_path=data_loader.get_video_path())
 
         self.number_of_frames = data_loader.number_of_frames
-        self.anim = animation.FuncAnimation(self.fig, self.animate,
-                                            frames=self.number_of_frames,
-                                            interval=FRAME_INTERVAL,
-                                            blit=False)
+        self.animation = animation.FuncAnimation(self.fig, self.animate,
+                                                 frames=self.number_of_frames,
+                                                 interval=FRAME_INTERVAL,
+                                                 blit=False)
 
+        self.animation_running = True
+        self.animation.event_source.stop()  # Initially stop the animation
+
+    def toggle_animation(self):
+        if self.animation_running:
+            self.animation.event_source.stop()
+            self.animation_running = False
+        else:
+            self.animation.event_source.start()
+            self.animation_running = True
     def animate(self, frame_number: Union[str, int]):
         self.subplot_3d.animate(frame_number)
         self.subplot_2d.animate(frame_number)
@@ -55,6 +65,7 @@ class AnimationCreator:
         self.subplot_video.animate(frame_number)
 
     def show(self):
+        self.animation.event_source.start()
         plt.show()
 
 
