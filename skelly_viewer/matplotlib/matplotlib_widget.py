@@ -36,7 +36,7 @@ class MatplotlibAnimation(QWidget):
 
 
         # Add animation to layout
-        self.canvas = FigureCanvasQTAgg(self.animation_creator.fig)
+        self.canvas = FigureCanvasQTAgg(self.animation_creator.figure)
         self.layout.addWidget(self.canvas)
 
     def toggle_animation(self):
