@@ -22,25 +22,25 @@ class AnimationCreator:
                                       height_ratios=[3, 1],
                                       wspace=0.05,
                                       hspace=0.05)
-        self.axis_3d = Subplot3d(figure=self.fig,
-                                 grid_spec=grid_spec,
-                                 subplot_index=(0, 0),
-                                 data_loader=data_loader)
+        self.subplot_3d = Subplot3d(figure=self.fig,
+                                    grid_spec=grid_spec,
+                                    subplot_index=(0, 0),
+                                    data_loader=data_loader)
 
-        self.axis_2d = Subplot2d(figure=self.fig,
-                                 grid_spec=grid_spec,
-                                 subplot_index=(1, 0),
-                                 data_loader=data_loader)
+        self.subplot_2d = Subplot2d(figure=self.fig,
+                                    grid_spec=grid_spec,
+                                    subplot_index=(1, 0),
+                                    data_loader=data_loader)
 
-        self.timeseries_ax = TimeseriesSubplot(figure=self.fig,
-                                               grid_spec=grid_spec,
-                                               subplot_index=(1, 1),
-                                               data_loader=data_loader, )
+        self.subplot_timeseries = TimeseriesSubplot(figure=self.fig,
+                                                    grid_spec=grid_spec,
+                                                    subplot_index=(1, 1),
+                                                    data_loader=data_loader, )
 
-        self.video_ax = VideoSubplot(figure=self.fig,
-                                     grid_spec=grid_spec,
-                                     subplot_index=(0, 1),
-                                     video_path=data_loader.get_video_path())
+        self.subplot_video = VideoSubplot(figure=self.fig,
+                                          grid_spec=grid_spec,
+                                          subplot_index=(0, 1),
+                                          video_path=data_loader.get_video_path())
 
         self.number_of_frames = data_loader.number_of_frames
         self.anim = animation.FuncAnimation(self.fig, self.animate,
@@ -49,10 +49,10 @@ class AnimationCreator:
                                             blit=False)
 
     def animate(self, frame_number: Union[str, int]):
-        self.axis_3d.animate(frame_number)
-        self.axis_2d.animate(frame_number)
-        self.timeseries_ax.animate(frame_number)
-        self.video_ax.animate(frame_number)
+        self.subplot_3d.animate(frame_number)
+        self.subplot_2d.animate(frame_number)
+        self.subplot_timeseries.animate(frame_number)
+        self.subplot_video.animate(frame_number)
 
     def show(self):
         plt.show()

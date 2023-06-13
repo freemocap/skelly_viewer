@@ -16,6 +16,7 @@ class Subplot2d(BasePlot):
     def set_axis_limits(self):
         self.ax.set_xlim(self.axis_limits["x"])
         self.ax.set_ylim(self.axis_limits["y"])
+        self.ax.set_aspect('equal')
 
     def draw_body_parts_connection(self, body_parts: dict, body_parts_names: list, connection: tuple):
         x_values = [body_parts[body_parts_names[connection[0]]]['x'], body_parts[body_parts_names[connection[1]]]['x']]
