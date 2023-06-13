@@ -1,8 +1,9 @@
+import sys
 from pathlib import Path
 from typing import Union
 
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout
+from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QApplication
 
 from skelly_viewer.gui.qt.widgets.multi_video_display import MultiVideoDisplay
 from skelly_viewer.gui.qt.widgets.skeleton_view_widget import SkeletonViewWidget
@@ -10,7 +11,6 @@ from skelly_viewer.gui.qt.widgets.slider_widget import PlayPauseCountSlider
 
 
 class SkellyViewer(QWidget):
-    # session_folder_loaded_signal = pyqtSignal()
     def __init__(self, mediapipe_skeleton_npy_path=None, video_folder_path=None):
         super().__init__()
 
@@ -27,7 +27,6 @@ class SkellyViewer(QWidget):
         layout.addLayout(skeleton_and_videos_layout)
 
         self.multi_video_display = MultiVideoDisplay()
-        # self.multi_video_display.setFixedSize(self.skeleton_view_widget.size()*1.5)
         skeleton_and_videos_layout.addWidget(self.multi_video_display)
 
         self._frame_count_slider = PlayPauseCountSlider()
@@ -66,6 +65,7 @@ class SkellyViewer(QWidget):
 
         self._frame_count_slider._slider.valueChanged.connect(self._handle_slider_value_changed)
 
+
     def _handle_data_loaded_signal(self):
         self._frame_count_slider.set_slider_range(self._skeleton_view_widget._number_of_frames)
         self._frame_count_slider.setEnabled(True)
@@ -78,3 +78,19 @@ class SkellyViewer(QWidget):
     def toggle_video_display(self):
         self._is_video_display_enabled = not self._is_video_display_enabled
         self.multi_video_display.setVisible(self._is_video_display_enabled)
+
+
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+
+    # Instantiate the widget
+    widget = SkellyViewer()
+    widget.show()  # Show the widget
+
+    # load skeleton data and video data
+    mediapipe_skeleton_npy_path = r"C:\Users\jonma\freemocap_data\recording_sessions\freemocap_sample_data\output_data\mediapipe_body_3d_xyz.npy"
+    video_folder_path = r"C:\Users\jonma\freemocap_data\recording_sessions\freemocap_sample_data\annotated_videos"
+    widget.set_data_paths(mediapipe_skeleton_npy_path, video_folder_path)
+
+    sys.exit(app.exec())

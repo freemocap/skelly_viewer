@@ -1,6 +1,7 @@
+import sys
 from typing import Union
 from PyQt6.QtCore import pyqtSignal
-from PyQt6.QtWidgets import QWidget, QVBoxLayout
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QApplication
 from skelly_viewer.utilities.mediapipe_skeleton_builder import build_skeleton, mediapipe_indices, mediapipe_connections
 import matplotlib
 matplotlib.use('Qt5Agg')
@@ -18,107 +19,99 @@ class SkeletonViewWidget(QWidget):
         self._layout = QVBoxLayout()
         self.setLayout(self._layout)
 
-        self._figure_widget, self._3d_axes = self.initialize_skeleton_plot()
+        self._figure_widget, self._3d_axes = self._initialize_skeleton_plot()
         self._layout.addWidget(self._figure_widget)
         self._skel_bones = None
 
     def load_skeleton_data(self, mediapipe_skeleton_npy_path: Union[str, Path]):
-        self._skeleton_3d_frame_marker_xyz = np.load(str(mediapipe_skeleton_npy_path))
-        self._mediapipe_skeleton = build_skeleton(skeleton_3d_frame_marker_xyz=self._skeleton_3d_frame_marker_xyz,
-                                                  pose_estimation_markers_list=mediapipe_indices,
-                                                  pose_estimation_connections_dict=mediapipe_connections)
+        skeleton_3d_frame_marker_xyz = np.load(str(mediapipe_skeleton_npy_path))
+        self._mediapipe_skeleton = build_skeleton(
+            skeleton_3d_frame_marker_xyz=skeleton_3d_frame_marker_xyz,
+            pose_estimation_markers_list=mediapipe_indices,
+            pose_estimation_connections_dict=mediapipe_connections)
 
-        self._number_of_frames = self._skeleton_3d_frame_marker_xyz.shape[0]
-        self._initialize_3d_axes()
+        self._number_of_frames = skeleton_3d_frame_marker_xyz.shape[0]
+        self._initialize_3d_axes(skeleton_3d_frame_marker_xyz)
 
         self.skeleton_data_loaded_signal.emit()
 
-    def initialize_skeleton_plot(self):
+    def _initialize_skeleton_plot(self):
         figure_widget = Mpl3DPlotCanvas(parent=self)
         figure_widget.setMinimumSize(100, 100)
         axes = figure_widget.figure.axes[0]
         return figure_widget, axes
 
-    def _initialize_3d_axes(self):
+    def _initialize_3d_axes(self, skeleton_3d_frame_marker_xyz):
         self._3d_axes.cla()
-        self._calculate_axes_means(self._skeleton_3d_frame_marker_xyz)
-        self.skel_x, self.skel_y, self.skel_z = self._get_x_y_z_data(0)
-        self.skel_points = self._3d_axes.scatter(self.skel_x, self.skel_y, self.skel_z, 'ko', s=1)
+        data_midpoint_x, data_midpoint_y, data_midpoint_z, axes_3d_range = self._calculate_axes_means(skeleton_3d_frame_marker_xyz)
+        skel_x, skel_y, skel_z = self._get_x_y_z_data(skeleton_3d_frame_marker_xyz, 0)
+        self.skel_points = self._3d_axes.scatter(skel_x, skel_y, skel_z, 'ko', s=1)
         self.skel_bones = self._plot_skeleton_bones(0)
 
     def reset_slider(self):
-        self._slider_max = self._number_of_frames - 1
+        slider_max = self._number_of_frames - 1
         self.slider.setValue(0)
-        self.slider.setMaximum(self._slider_max)
+        self.slider.setMaximum(slider_max)
 
-    def _calculate_axes_means(self, skeleton_3d_frame_marker_xyz: np.ndarray):
-        self._data_midpoint_x = np.nanmean(skeleton_3d_frame_marker_xyz[:, :, 0])
-        self._data_midpoint_y = np.nanmean(skeleton_3d_frame_marker_xyz[:, :, 1])
-        self._data_midpoint_z = np.nanmean(skeleton_3d_frame_marker_xyz[:, :, 2])
-        self._axes_3d_range = 1000
+    @staticmethod
+    def _calculate_axes_means(skeleton_3d_frame_marker_xyz: np.ndarray):
+        data_midpoint_x = np.nanmean(skeleton_3d_frame_marker_xyz[:, :, 0])
+        data_midpoint_y = np.nanmean(skeleton_3d_frame_marker_xyz[:, :, 1])
+        data_midpoint_z = np.nanmean(skeleton_3d_frame_marker_xyz[:, :, 2])
+        axes_3d_range = 1000
+        return data_midpoint_x, data_midpoint_y, data_midpoint_z, axes_3d_range
 
     def _plot_skeleton(self, frame_number, skeleton_points_x, skeleton_points_y, skeleton_points_z):
-        
         self.skel_points.set_offsets(np.column_stack([skeleton_points_x, skeleton_points_y]))
         self.skel_points.set_3d_properties(skeleton_points_z, zdir='z')
         self._plot_skeleton_bones(frame_number)
-
-        self._3d_axes.set_xlim(
-        [self._data_midpoint_x - self._axes_3d_range, self._data_midpoint_x + self._axes_3d_range])
-        self._3d_axes.set_ylim(
-        [self._data_midpoint_y - self._axes_3d_range, self._data_midpoint_y + self._axes_3d_range])
-        self._3d_axes.set_zlim(
-        [self._data_midpoint_z - self._axes_3d_range, self._data_midpoint_z + self._axes_3d_range])
-
-        self._figure_widget.figure.canvas.draw_idle()
+        self._set_axes_lim()
 
     def _plot_skeleton_bones(self, frame_number):
         if self._skel_bones is None:
-            this_frame_skeleton_data = self._mediapipe_skeleton[frame_number]
             self._skel_bones = []
-            for connection in this_frame_skeleton_data.keys():
-                line_start_point = this_frame_skeleton_data[connection][0]
-                line_end_point = this_frame_skeleton_data[connection][1]
-
-                bone_x, bone_y, bone_z = [line_start_point[0], line_end_point[0]], [line_start_point[1],
-                                                                                    line_end_point[1]], [
-                                             line_start_point[2], line_end_point[2]]
-                bone = self._3d_axes.plot(bone_x, bone_y, bone_z)[0]
+            for connection in self._mediapipe_skeleton[frame_number].keys():
+                bone = self._3d_axes.plot(*self._get_bone_coordinates(frame_number, connection))[0]
                 self._skel_bones.append(bone)
         else:
-            this_frame_skeleton_data = self._mediapipe_skeleton[frame_number]
-            for i, connection in enumerate(this_frame_skeleton_data.keys()):
-                line_start_point = this_frame_skeleton_data[connection][0]
-                line_end_point = this_frame_skeleton_data[connection][1]
-
-                bone_x, bone_y, bone_z = [line_start_point[0], line_end_point[0]], [line_start_point[1],
-                                                                                    line_end_point[1]], [
-                                             line_start_point[2], line_end_point[2]]
+            for i, connection in enumerate(self._mediapipe_skeleton[frame_number].keys()):
+                bone_x, bone_y, bone_z = self._get_bone_coordinates(frame_number, connection)
                 bone = self._skel_bones[i]
                 bone.set_xdata(bone_x)
                 bone.set_ydata(bone_y)
                 bone.set_3d_properties(bone_z)
 
+    def _get_bone_coordinates(self, frame_number, connection):
+        line_start_point = self._mediapipe_skeleton[frame_number][connection][0]
+        line_end_point = self._mediapipe_skeleton[frame_number][connection][1]
 
-    def _get_x_y_z_data(self, frame_number: int):
-        
-        skel_x = self._skeleton_3d_frame_marker_xyz[frame_number, :, 0]
-        skel_y = self._skeleton_3d_frame_marker_xyz[frame_number, :, 1]
-        skel_z = self._skeleton_3d_frame_marker_xyz[frame_number, :, 2]
+        bone_x, bone_y, bone_z = [line_start_point[0], line_end_point[0]], [line_start_point[1],
+                                                                            line_end_point[1]], [
+                                     line_start_point[2], line_end_point[2]]
+        return bone_x, bone_y, bone_z
 
+    @staticmethod
+    def _get_x_y_z_data(skeleton_3d_frame_marker_xyz, frame_number: int):
+        skel_x = skeleton_3d_frame_marker_xyz[frame_number, :, 0]
+        skel_y = skeleton_3d_frame_marker_xyz[frame_number, :, 1]
+        skel_z = skeleton_3d_frame_marker_xyz[frame_number, :, 2]
         return skel_x, skel_y, skel_z
 
     def update_skeleton_plot(self, frame_number: int):
-        skel_x, skel_y, skel_z = self._get_x_y_z_data(frame_number)
+        skel_x, skel_y, skel_z = self._get_x_y_z_data(self._skeleton_3d_frame_marker_xyz, frame_number)
         self.skel_points.set_offsets(np.column_stack([skel_x, skel_y]))
         self.skel_points.set_3d_properties(skel_z, zdir='z')
         self._plot_skeleton_bones(frame_number)
+        self._set_axes_lim()
+
+    def _set_axes_lim(self):
         self._3d_axes.set_xlim(
             [self._data_midpoint_x - self._axes_3d_range, self._data_midpoint_x + self._axes_3d_range])
         self._3d_axes.set_ylim(
             [self._data_midpoint_y - self._axes_3d_range, self._data_midpoint_y + self._axes_3d_range])
         self._3d_axes.set_zlim(
             [self._data_midpoint_z - self._axes_3d_range, self._data_midpoint_z + self._axes_3d_range])
+
         self._figure_widget.figure.canvas.draw_idle()
 
 class Mpl3DPlotCanvas(FigureCanvasQTAgg):
@@ -126,3 +119,20 @@ class Mpl3DPlotCanvas(FigureCanvasQTAgg):
         fig = Figure(figsize=(width, height), dpi=dpi)
         self.axes = fig.add_subplot(111, projection='3d')
         super(Mpl3DPlotCanvas, self).__init__(fig)
+
+
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+
+    # Instantiate the widget
+    widget = SkeletonViewWidget()
+    widget.show()  # Show the widget
+
+    skeleton_frame_marker_xyz_path = r"C:\Users\jonma\freemocap_data\recording_sessions\freemocap_sample_data\output_data\mediapipe_body_3d_xyz.npy"
+
+    # Load the skeleton data from the file
+    widget.load_skeleton_data(mediapipe_skeleton_npy_path=skeleton_frame_marker_xyz_path)
+
+
+    sys.exit(app.exec())
