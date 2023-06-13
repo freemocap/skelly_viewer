@@ -24,14 +24,28 @@ class AnimationCreator:
 
     def animate(self, frame_number: Union[str, int]):
         self.ax.clear()
+
+        # Extract body coordinates
         body = self.data_by_frame[str(frame_number)]["body"]
-        body_names = list(body.keys())
-        self.ax.scatter(
-            np.array([point["x"] for point in body.values()]),
-            np.array([point["y"] for point in body.values()]),
-            np.array([point["z"] for point in body.values()]),
-            c='purple',
-        )
+        x_data = np.array([point["x"] for point in body.values()])
+        y_data = np.array([point["y"] for point in body.values()])
+        z_data = np.array([point["z"] for point in body.values()])
+
+        # Find max range of the data
+        max_range = np.array(
+            [x_data.max() - x_data.min(), y_data.max() - y_data.min(), z_data.max() - z_data.min()]).max() / 2.0
+
+        # Find the mid points in the data
+        mid_x = (x_data.max() + x_data.min()) * 0.5
+        mid_y = (y_data.max() + y_data.min()) * 0.5
+        mid_z = (z_data.max() + z_data.min()) * 0.5
+
+        # Set the limits of x, y and z axes
+        self.ax.set_xlim(mid_x - max_range, mid_x + max_range)
+        self.ax.set_ylim(mid_y - max_range, mid_y + max_range)
+        self.ax.set_zlim(mid_z - max_range, mid_z + max_range)
+
+        self.ax.scatter(x_data, y_data, z_data, c='purple')
 
     def show(self):
         plt.show()
