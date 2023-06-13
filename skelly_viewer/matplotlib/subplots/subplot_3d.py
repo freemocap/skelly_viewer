@@ -8,25 +8,25 @@ from skelly_viewer.matplotlib.subplots.base_subplot import BasePlot, PLOT_COLOR,
 class Subplot3d(BasePlot):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.ax = self.figure.add_subplot(self.grid_spec[0, 0], projection='3d')
+        self.axis = self.figure.add_subplot(self.grid_spec[0, 0], projection='3d')
         self.set_axis_limits()
 
     def clear(self):
-        self.ax.clear()
+        self.axis.clear()
 
     def set_axis_limits(self):
-        self.ax.set_xlim(self.axis_limits["x"])
-        self.ax.set_ylim(self.axis_limits["y"])
-        self.ax.set_zlim(self.axis_limits["z"])
+        self.axis.set_xlim(self.axis_limits["x"])
+        self.axis.set_ylim(self.axis_limits["y"])
+        self.axis.set_zlim(self.axis_limits["z"])
 
     def draw_body_parts_connection(self, body_parts: dict, body_parts_names: list, connection: tuple):
         x_values = [body_parts[body_parts_names[connection[0]]]['x'], body_parts[body_parts_names[connection[1]]]['x']]
         y_values = [body_parts[body_parts_names[connection[0]]]['y'], body_parts[body_parts_names[connection[1]]]['y']]
         z_values = [body_parts[body_parts_names[connection[0]]]['z'], body_parts[body_parts_names[connection[1]]]['z']]
-        self.ax.plot(x_values, y_values, z_values, PLOT_COLOR)
+        self.axis.plot(x_values, y_values, z_values, PLOT_COLOR)
 
     def scatter_body_parts(self, body_parts: dict):
-        self.ax.scatter(
+        self.axis.scatter(
             np.array([point["x"] for point in body_parts.values()]),
             np.array([point["y"] for point in body_parts.values()]),
             np.array([point["z"] for point in body_parts.values()]),

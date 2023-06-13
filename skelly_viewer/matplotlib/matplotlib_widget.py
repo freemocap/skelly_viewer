@@ -43,7 +43,7 @@ class MatplotlibAnimation(QWidget):
         self.animation_creator.toggle_animation()
 
     def update_frame(self, value):
-        self.animation_creator.animate(value)
+        self.animation_creator.update_figure(value)
 
 
 
