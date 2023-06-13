@@ -11,8 +11,10 @@ from skelly_viewer.config.folder_and_file_names import BASE_FOLDER_NAME, SAMPLE_
 SAMPLE_DATA_URL = zip_file_url = 'https://figshare.com/ndownloader/files/39369101'
 
 logger = logging.getLogger(__name__)
+
+get_sample_data_path = lambda: get_base_folder_path() / SAMPLE_DATA_FILE_NAME.split('.')[0]
 def load_sample_data():
-    sample_recording_path = get_base_folder_path() / SAMPLE_DATA_FILE_NAME.split('.')[0]
+    sample_recording_path = get_sample_data_path()
     if not Path.exists(sample_recording_path):
         logger.info(f"Downloading sample data from: {SAMPLE_DATA_URL}")
         r = requests.get(SAMPLE_DATA_URL)

@@ -5,7 +5,7 @@ from dash import dcc, Dash, html, Input, Output, State
 from plotly import graph_objects as go
 
 from skelly_viewer.experimental.plotly.plotly_dash_setup import FrameCreator
-from skelly_viewer.data_loader.data_loader import DataLoader
+from skelly_viewer.data_wrangling.data_loader import DataLoader
 
 # moved constants to the top
 AXIS_RANGE = 5000
