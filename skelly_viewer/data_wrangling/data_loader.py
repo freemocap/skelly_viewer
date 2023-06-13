@@ -34,9 +34,6 @@ class DataLoader:
         return data
 
 
-    def get_trajectory(self, trajectory_name):
-        return self.data_by_trajectory.loc[self.data_by_trajectory["trajectory_name"] == trajectory_name]
-
     def load_body_npy(self):
         body_npy_filename = "mediapipe_body_3d_xyz.npy"
         return np.load(str(self.output_data_path / body_npy_filename))

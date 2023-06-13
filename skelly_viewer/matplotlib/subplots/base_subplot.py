@@ -13,7 +13,7 @@ class BasePlot:
     def __init__(self, figure: Figure,
                  grid_spec: GridSpec,
                  subplot_index: tuple,
-                 data_loader: DataLoader):
+                 data_loader: DataLoader = None):
         self.figure = figure
         self.grid_spec = grid_spec
         self.subplot_index = subplot_index
