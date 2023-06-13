@@ -8,6 +8,7 @@ import pandas as pd
 
 class DataLoader:
     def __init__(self, recording_folder_path: Union[str, Path]):
+        self.video_path = None
         self.recording_folder_path = Path(recording_folder_path)
         self.output_data_path = self.recording_folder_path / "output_data"
         self.data_by_trajectory = self.load_data_by_trajectory()
@@ -40,3 +41,11 @@ class DataLoader:
 
     def load_center_of_mass(self):
         return np.load(str(self.output_data_path / "center_of_mass" / "total_body_center_of_mass_xyz.npy"))
+
+    def get_video_path(self):
+        videos_path = self.recording_folder_path / "annotated_videos"
+
+        if len(list(videos_path.glob("*.mp4"))) > 0:
+            return list(videos_path.glob("*.mp4"))[0]
+
+        raise FileNotFoundError(f"No video found in {videos_path}")

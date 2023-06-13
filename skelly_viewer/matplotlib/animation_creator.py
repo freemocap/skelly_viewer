@@ -8,6 +8,7 @@ from skelly_viewer.data_wrangling.data_loader import DataLoader
 from skelly_viewer.matplotlib.subplots.subplot_2d import Subplot2d
 from skelly_viewer.matplotlib.subplots.subplot_3d import Subplot3d
 from skelly_viewer.matplotlib.subplots.timeseries_subplot import TimeseriesSubplot
+from skelly_viewer.matplotlib.subplots.video_subplot import VideoSubplot
 
 FRAME_INTERVAL = 1000 / 30
 
@@ -15,11 +16,17 @@ FRAME_INTERVAL = 1000 / 30
 class AnimationCreator:
     def __init__(self, data_loader: DataLoader):
         self.fig = plt.figure()
-        grid_spec = gridspec.GridSpec(2, 2, figure=self.fig)
+        grid_spec = gridspec.GridSpec(2, 2,
+                                      figure=self.fig,
+                                      width_ratios=[1, 1],
+                                      height_ratios=[3, 1],
+                                      wspace=0.05,
+                                      hspace=0.05)
         self.axis_3d = Subplot3d(figure=self.fig,
                                  grid_spec=grid_spec,
                                  subplot_index=(0, 0),
                                  data_loader=data_loader)
+
         self.axis_2d = Subplot2d(figure=self.fig,
                                  grid_spec=grid_spec,
                                  subplot_index=(1, 0),
@@ -29,6 +36,11 @@ class AnimationCreator:
                                                grid_spec=grid_spec,
                                                subplot_index=(1, 1),
                                                data_loader=data_loader, )
+
+        self.video_ax = VideoSubplot(figure=self.fig,
+                                     grid_spec=grid_spec,
+                                     subplot_index=(0, 1),
+                                     video_path=data_loader.get_video_path())
 
         self.number_of_frames = data_loader.number_of_frames
         self.anim = animation.FuncAnimation(self.fig, self.animate,
@@ -40,6 +52,7 @@ class AnimationCreator:
         self.axis_3d.animate(frame_number)
         self.axis_2d.animate(frame_number)
         self.timeseries_ax.animate(frame_number)
+        self.video_ax.animate(frame_number)
 
     def show(self):
         plt.show()
