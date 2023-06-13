@@ -10,7 +10,10 @@ class DataLoader:
         self.recording_folder_path = Path(recording_folder_path)
         self.data_by_trajectory = self.load_data_by_trajectory()
         self.data_by_frame = self.load_data_by_frame()
-        self._frame_number = -1
+
+    @property
+    def number_of_frames(self):
+        return len(self.data_by_frame["data_by_frame"])
 
     def load_data_by_trajectory(self):
         file_name = f"{self.recording_folder_path.name}_by_trajectory.csv"
@@ -25,14 +28,6 @@ class DataLoader:
             data = json.load(f)
         return data
 
-    def get_frame_data(self, frame_number: Union[int, str] = None):
-        if frame_number is None:
-            self._frame_number += 1
-        else:
-            self._frame_number = frame_number
-
-        self._frame_number = self._frame_number % len(self.data_by_frame)
-        return self.data_by_frame[str(self._frame_number)]
 
     def get_trajectory(self, trajectory_name):
         return self.data_by_trajectory.loc[self.data_by_trajectory["trajectory_name"] == trajectory_name]
