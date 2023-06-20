@@ -5,7 +5,7 @@ from PyQt6.QtCore import QUrl
 from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout
 
-from skelly_viewer.experimental.plotly.capture_volume_3d_viewer import CaptureVolume3dViewer
+from skelly_viewer.experimental.plotly_exp.capture_volume_3d_viewer import CaptureVolume3dViewer
 
 
 class View3dWidget(QWidget):
