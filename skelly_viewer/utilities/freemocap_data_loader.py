@@ -7,8 +7,8 @@ from skelly_viewer.config.folder_and_file_names import MEDIAPIPE_3D_BODY_FILE_NA
 
 
 class FreeMoCapDataLoader:
-    def __init__(self, path_to_session_folder: Path):
-        self._recording_folder_path = path_to_session_folder
+    def __init__(self, path_to_recording_folder: Path):
+        self._recording_folder_path = path_to_recording_folder
 
     def load_mediapipe_body_data(self):
         path_to_mediapipe_body_data = self.find_output_data_folder_path()
