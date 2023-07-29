@@ -35,16 +35,15 @@ class AnimationCreator:
         self.figure_maker = FigureMaker(data_loader=data_loader,
                                         frames=self.frame_numbers)
 
-
-
-
-
-
     def update_figure(self, frame_number: Union[str, int]):
-        # If the states have been stored, apply them in each frame
-
         self.figure_maker.figure.suptitle(f"{self.recording_name} - Frame {frame_number}")
-        self.figure_maker.update_figure(frame_number=frame_number)
+        artists = []
+        artists.extend(self.figure_maker.subplot_3d.animate(frame_number=frame_number))
+        # artists.extend(self.figure_maker.subplot_2d.animate(frame_number=frame_number))
+        # artists.extend(self.figure_maker.subplot_timeseries.animate(frame_number=frame_number))
+        # artists.extend(self.figure_maker.subplot_video.animate(frame_number=frame_number))
+
+        return artists
 
     def show_middle_frame(self):
         # Calculate the middle frame number

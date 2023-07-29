@@ -1,6 +1,7 @@
-from typing import Union
+from typing import Union, List
 
 import numpy as np
+from matplotlib.artist import Artist
 
 from skelly_viewer.matplotlib.subplots.base_subplot import BasePlot, PLOT_COLOR, MARKER_SIZE
 
@@ -18,7 +19,7 @@ class Subplot3d(BasePlot):
 
     def set_azimuth(self, angle: Union[str, int]):
         self.axis.azim = angle
-    def set_eleveation(self, angle: Union[str, int]):
+    def set_elevation(self, angle: Union[str, int]):
         self.axis.elev = angle
 
     def set_axis_limits(self):
@@ -30,10 +31,10 @@ class Subplot3d(BasePlot):
         x_values = [body_parts[body_parts_names[connection[0]]]['x'], body_parts[body_parts_names[connection[1]]]['x']]
         y_values = [body_parts[body_parts_names[connection[0]]]['y'], body_parts[body_parts_names[connection[1]]]['y']]
         z_values = [body_parts[body_parts_names[connection[0]]]['z'], body_parts[body_parts_names[connection[1]]]['z']]
-        self.axis.plot(x_values, y_values, z_values, PLOT_COLOR)
+        return self.axis.plot(x_values, y_values, z_values, PLOT_COLOR)
 
     def body_parts_scatter(self, body_parts: dict):
-        self.axis.scatter(
+        return self.axis.scatter(
             np.array([point["x"] for point in body_parts.values()]),
             np.array([point["y"] for point in body_parts.values()]),
             np.array([point["z"] for point in body_parts.values()]),
@@ -42,7 +43,7 @@ class Subplot3d(BasePlot):
         )
 
     def center_of_mass_scatter(self, center_of_mass_xyz: np.ndarray):
-        self.axis.scatter(
+        return self.axis.scatter(
             center_of_mass_xyz[0],
             center_of_mass_xyz[1],
             center_of_mass_xyz[2],
@@ -72,16 +73,19 @@ class Subplot3d(BasePlot):
     #         c='r',
     #     )
 
-    def animate(self, frame_number: Union[str, int]):
+    def animate(self, frame_number: Union[str, int])->List[Artist]:
         self.clear()
         self.set_axis_limits()
         self.set_azimuth(CAMERA_AZIMUTH)
-        self.set_eleveation(CAMERA_ELEVATION)
+        self.set_elevation(CAMERA_ELEVATION)
         body_parts = self.data_by_frame[str(frame_number)]["body"]
         connections = self.info["names_and_connections"]["body"]["connections"]
         body_parts_names = list(body_parts.keys())
+
+        artists = []  # list to store all artists
         for connection in connections:
             self.draw_body_parts_connection(body_parts, body_parts_names, connection)
-        self.body_parts_scatter(body_parts)
-        self.center_of_mass_scatter(self.com_xyz[int(frame_number), :])
-        # self.center_of_mass_trajectory_2d(int(frame_number))
+        artists.append(self.body_parts_scatter(body_parts))
+        artists.append(self.center_of_mass_scatter(self.com_xyz[int(frame_number), :]))
+
+        return artists
