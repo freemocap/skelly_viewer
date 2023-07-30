@@ -1,9 +1,11 @@
 import math
+import sys
 import time
 
 import numpy as np
 import pyqtgraph as pg
 import pyqtgraph.opengl as gl
+from PyQt6 import QtWidgets
 from pyqtgraph.Qt import QtCore
 
 
@@ -40,10 +42,9 @@ class SpheresViewer:
         self.spheres_item = gl.GLScatterPlotItem(
             pos=initial_pos, size=size, color=color, pxMode=False
         )
-
         self.view_widget.addItem(self.spheres_item)
-
         self.start_time = time.time()
+        self.update_timer = QtCore.QTimer()
 
     def update(self):
         time_factor = (time.time() - self.start_time) * 0.1
@@ -51,14 +52,44 @@ class SpheresViewer:
         self.spheres_item.setData(pos=new_positions)
 
     def start(self):
-        self.view_widget.show()
-        update_timer = QtCore.QTimer()
-        update_timer.timeout.connect(self.update)
-        update_timer.start(50)
-        pg.exec()
+        self.update_timer.timeout.connect(self.update)
+        self.update_timer.start(50)
+
+    def stop(self):
+        self.update_timer.stop()
+
+
+class MyMainWindow(QtWidgets.QMainWindow):
+    def __init__(self, viewer, parent=None):
+        super(MyMainWindow, self).__init__(parent)
+        self.viewer = viewer
+        self.resize(800, 600)
+        central_widget = QtWidgets.QWidget()
+        main_layout = QtWidgets.QVBoxLayout(central_widget)
+
+        viewer_layout = QtWidgets.QVBoxLayout()
+        viewer_layout.addWidget(self.viewer.view_widget)
+
+        btn_layout = QtWidgets.QVBoxLayout()
+        play_button = QtWidgets.QPushButton("Play")
+        play_button.clicked.connect(self.viewer.start)
+        btn_layout.addWidget(play_button)
+
+        pause_button = QtWidgets.QPushButton("Pause")
+        pause_button.clicked.connect(self.viewer.stop)
+        btn_layout.addWidget(pause_button)
+
+        main_layout.addLayout(viewer_layout)
+        main_layout.addLayout(btn_layout)
+
+        self.setCentralWidget(central_widget)
 
 
 if __name__ == '__main__':
     generator = SpherePathGenerator()
     viewer = SpheresViewer(generator)
-    viewer.start()
+
+    app = QtWidgets.QApplication([])
+    mainWin = MyMainWindow(viewer)
+    mainWin.show()
+    sys.exit(app.exec())
