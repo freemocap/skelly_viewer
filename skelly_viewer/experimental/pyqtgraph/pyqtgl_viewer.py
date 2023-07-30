@@ -34,22 +34,26 @@ class SpheresViewer:
         self.view_widget.addItem(self.grid)
 
         self.path_generator = sphere_path_generator
-
         initial_pos = self.path_generator.generate_path(0)
-        size = np.full(24, 1)
-        color = np.array([[1.0, 0.0, 0.0, 0.5]] * 24)
 
-        self.spheres_item = gl.GLScatterPlotItem(
-            pos=initial_pos, size=size, color=color, pxMode=False
-        )
-        self.view_widget.addItem(self.spheres_item)
+        # Make the spheres
+        self.spheres_item = []
+        for pos in initial_pos:
+            sphere_mesh_data = gl.MeshData.sphere(rows=10, cols=20)
+            m3 = gl.GLMeshItem(meshdata=sphere_mesh_data, color=(1.0, 0.0, 0.0, 0.5), drawEdges=True)
+            m3.translate(*pos)
+            self.spheres_item.append(m3)
+            self.view_widget.addItem(m3)
+
         self.start_time = time.time()
         self.update_timer = QtCore.QTimer()
 
     def update(self):
         time_factor = (time.time() - self.start_time) * 0.1
         new_positions = self.path_generator.generate_path(time_factor)
-        self.spheres_item.setData(pos=new_positions)
+        for i, pos in enumerate(new_positions):
+            self.spheres_item[i].resetTransform()
+            self.spheres_item[i].translate(*pos)
 
     def start(self):
         self.update_timer.timeout.connect(self.update)
