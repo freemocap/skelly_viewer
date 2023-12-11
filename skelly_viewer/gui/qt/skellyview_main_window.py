@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Union
 
-from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QFileDialog, QMainWindow, QHBoxLayout
+from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QFileDialog, QMainWindow, QHBoxLayout
 
 from skelly_viewer import SkellyViewer
 
@@ -28,9 +28,9 @@ class SkellyViewerMainWindow(QMainWindow):
         self._folder_open_button.clicked.connect(self._open_session_folder_dialog)
         hbox.addWidget(self._folder_open_button)
 
-        self._sample_data_loader_button = QPushButton('Load sample data', self)
-        self._sample_data_loader_button.clicked.connect(lambda: self._load_data(path=load_sample_data()))
-        hbox.addWidget(self._sample_data_loader_button)
+        # self._sample_data_loader_button = QPushButton('Load sample data', self)
+        # self._sample_data_loader_button.clicked.connect(lambda: self._load_data(path=load_sample_data()))
+        # hbox.addWidget(self._sample_data_loader_button)
 
         self._toggle_video_display_button = QPushButton('Toggle Video Display', self)
         self._toggle_video_display_button.clicked.connect(self._toggle_video_display)

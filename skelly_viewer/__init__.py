@@ -16,10 +16,6 @@ print(f"Thank you for using {__package_name__}!")
 print(f"This is printing from: {__file__}")
 print(f"Source code for this package is available at: {__repo_url__}")
 
-base_package_path = Path(__file__).parent
-print(f"adding base_package_path: {base_package_path} : to sys.path")
-sys.path.insert(0, str(base_package_path))  # add parent directory to sys.path
-
 from skelly_viewer.config.default_paths import get_log_file_path
 from skelly_viewer.config.logging_configuration import configure_logging
 from skelly_viewer.gui.qt.skelly_viewer_widget import SkellyViewer

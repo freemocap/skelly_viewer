@@ -6,7 +6,7 @@ from pathlib import Path
 import requests
 
 from skelly_viewer.config.default_paths import get_base_folder_path
-from skelly_viewer.config.folder_and_file_names import BASE_FOLDER_NAME, SAMPLE_DATA_FILE_NAME
+from skelly_viewer.config.folder_and_file_names import SAMPLE_DATA_FILE_NAME
 
 SAMPLE_DATA_URL = zip_file_url = 'https://figshare.com/ndownloader/files/39369101'
 

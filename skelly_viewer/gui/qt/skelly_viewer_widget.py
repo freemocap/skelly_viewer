@@ -1,8 +1,8 @@
 from pathlib import Path
 from typing import Union
 
-from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout
 
 from skelly_viewer.gui.qt.widgets.multi_video_display import MultiVideoDisplay
 from skelly_viewer.gui.qt.widgets.skeleton_view_widget import SkeletonViewWidget
@@ -10,7 +10,7 @@ from skelly_viewer.gui.qt.widgets.slider_widget import PlayPauseCountSlider
 
 
 class SkellyViewer(QWidget):
-    # session_folder_loaded_signal = pyqtSignal()
+    # session_folder_loaded_signal = Signal()
     def __init__(self, mediapipe_skeleton_npy_path=None, video_folder_path=None):
         super().__init__()
 

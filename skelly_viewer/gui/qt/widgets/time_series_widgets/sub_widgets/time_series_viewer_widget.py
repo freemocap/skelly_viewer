@@ -1,5 +1,5 @@
 import numpy as np
-from PyQt6.QtWidgets import QMainWindow, QWidget, QApplication, QVBoxLayout
+from PySide6.QtWidgets import QMainWindow, QWidget, QApplication, QVBoxLayout
 
 from skelly_viewer.gui.qt.widgets.time_series_widgets.sub_widgets.marker_selector_widget import MarkerSelectorWidget
 from skelly_viewer.gui.qt.widgets.time_series_widgets.trajectory_view_widget import TimeSeriesPlotterWidget

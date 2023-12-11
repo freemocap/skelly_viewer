@@ -1,12 +1,12 @@
 
-from PyQt6.QtCore import pyqtSignal
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QComboBox
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QComboBox
 
 from skelly_viewer.utilities.mediapipe_skeleton_builder import mediapipe_indices
 
 
 class MarkerSelectorWidget(QWidget):
-    marker_to_plot_updated_signal = pyqtSignal()
+    marker_to_plot_updated_signal = Signal()
     def __init__(self):
         super().__init__()
 

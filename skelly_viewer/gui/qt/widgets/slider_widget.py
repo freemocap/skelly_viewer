@@ -1,5 +1,5 @@
-from PyQt6.QtCore import Qt, QTimer, pyqtSlot
-from PyQt6.QtWidgets import QSlider, QWidget, QLabel, QHBoxLayout, QPushButton, QVBoxLayout
+from PySide6.QtCore import Qt, QTimer, Slot
+from PySide6.QtWidgets import QSlider, QWidget, QLabel, QHBoxLayout, QPushButton, QVBoxLayout
 
 PRESUMED_FRAMES_PER_SECOND = 30
 
@@ -64,23 +64,23 @@ class PlayPauseCountSlider(QWidget):
         self._slider.setValue(0)
         self._slider.setMaximum(self.slider_max)
 
-    @pyqtSlot()
+    @Slot()
     def _timer_timeout(self):
         if self._slider.value() < self.slider_max:
             self._slider.setValue(self._slider.value() + 1)
         else:
             self._slider.setValue(0)
 
-    @pyqtSlot()
+    @Slot()
     def _play_button_clicked(self):
         self._timer.stop()
         self._timer.start(0)  # play as fast as possible
 
-    @pyqtSlot()
+    @Slot()
     def _pause_button_clicked(self):
         self._timer.stop()
 
-    @pyqtSlot()
+    @Slot()
     def _reset_button_clicked(self):
         self._timer.stop()
         self._slider.setValue(0)

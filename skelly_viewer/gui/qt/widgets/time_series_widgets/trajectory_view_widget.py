@@ -1,6 +1,6 @@
 
 import matplotlib
-from PyQt6.QtWidgets import QWidget, QVBoxLayout
+from PySide6.QtWidgets import QWidget, QVBoxLayout
 
 matplotlib.use('Qt5Agg')
 

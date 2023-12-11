@@ -4,9 +4,9 @@ from pathlib import Path
 from typing import Union
 
 import numpy as np
-from PyQt6.QtCore import Qt, QThread, pyqtSignal
-from PyQt6.QtGui import QImage, QPixmap
-from PyQt6.QtWidgets import QWidget, QLabel, QVBoxLayout, QGridLayout, QSizePolicy
+from PySide6.QtCore import QThread, Qt, Signal
+from PySide6.QtGui import QPixmap, QImage
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLabel, QApplication
 
 from skelly_viewer.utilities.video_handler import VideoHandler
 
@@ -17,7 +17,7 @@ MAX_BUFFER_LENGTH = 5
 
 
 class UpdateDisplayWorker(QThread):
-    updated = pyqtSignal(np.ndarray, int)
+    updated = Signal(np.ndarray, int)
 
     def __init__(self, video_handlers):
         super().__init__()
@@ -149,7 +149,7 @@ class MultiVideoDisplay(QWidget):
 
 if __name__ == '__main__':
     import sys
-    from PyQt6.QtWidgets import QApplication
+
 
     app = QApplication(sys.argv)
     window = MultiVideoDisplay()
