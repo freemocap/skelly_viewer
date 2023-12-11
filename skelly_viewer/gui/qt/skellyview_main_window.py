@@ -4,11 +4,7 @@ from typing import Union
 from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QFileDialog, QMainWindow, QHBoxLayout
 
 from skelly_viewer import SkellyViewer
-
-from skelly_viewer.config.folder_and_file_names import BASE_FOLDER_NAME, SAMPLE_DATA_FILE_NAME, \
-    MEDIAPIPE_3D_BODY_FILE_NAME, OUTPUT_DATA_FOLDER_NAME
 from skelly_viewer.utilities.freemocap_data_loader import FreeMoCapDataLoader
-from skelly_viewer.utilities.load_sample_data import load_sample_data
 
 
 class SkellyViewerMainWindow(QMainWindow):
