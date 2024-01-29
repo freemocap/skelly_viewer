@@ -9,8 +9,8 @@ from skelly_viewer.utilities.mediapipe_skeleton_builder import build_skeleton, m
 
 import matplotlib
 
-matplotlib.use('Qt5Agg')
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
+matplotlib.use('QtAgg')
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 
 from pathlib import Path
@@ -29,11 +29,11 @@ class SkeletonViewWidget(QWidget):
         self._figure_widget, self._3d_axes = self.initialize_skeleton_plot()
         self._layout.addWidget(self._figure_widget)
 
-    def load_skeleton_data(self, mediapipe_skeleton_npy_path: Union[str, Path]):
-        self._skeleton_3d_frame_marker_xyz = np.load(str(mediapipe_skeleton_npy_path))
-        self._mediapipe_skeleton = build_skeleton(skeleton_3d_frame_marker_xyz=self._skeleton_3d_frame_marker_xyz,
-                                                  pose_estimation_markers_list=mediapipe_indices,
-                                                  pose_estimation_connections_dict=mediapipe_connections)
+    def load_skeleton_data(self, skeleton_npy_path: Union[str, Path], markers: list, connections: dict):
+        self._skeleton_3d_frame_marker_xyz = np.load(str(skeleton_npy_path))
+        self._skeleton = build_skeleton(skeleton_3d_frame_marker_xyz=self._skeleton_3d_frame_marker_xyz,
+                                                  pose_estimation_markers_list=markers,
+                                                  pose_estimation_connections_dict=connections)
 
         self._number_of_frames = self._skeleton_3d_frame_marker_xyz.shape[0]
         self._initialize_3d_axes()
@@ -76,7 +76,7 @@ class SkeletonViewWidget(QWidget):
         self._figure_widget.figure.canvas.draw_idle()
 
     def _plot_skeleton_bones(self, frame_number):
-        this_frame_skeleton_data = self._mediapipe_skeleton[frame_number]
+        this_frame_skeleton_data = self._skeleton[frame_number]
         for connection in this_frame_skeleton_data.keys():
             line_start_point = this_frame_skeleton_data[connection][0]
             line_end_point = this_frame_skeleton_data[connection][1]

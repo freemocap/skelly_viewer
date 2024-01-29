@@ -42,8 +42,11 @@ class SkellyViewer(QWidget):
         if video_folder_path is not None:
             self.generate_video_display(video_folder_path)
 
-    def load_skeleton_data(self, mediapipe_skeleton_npy_path: Union[str, Path]):
-        self._skeleton_view_widget.load_skeleton_data(mediapipe_skeleton_npy_path)
+    def load_skeleton_data(self, skeleton_npy_path: Union[str, Path], markers: list, connections: dict):
+        self._skeleton_view_widget.load_skeleton_data(
+            skeleton_npy_path=skeleton_npy_path, 
+            markers=markers, 
+            connections=connections)
 
     def generate_video_display(self, video_folder_path: Union[str, Path]):
         self.multi_video_display.generate_video_display(video_folder_path)
