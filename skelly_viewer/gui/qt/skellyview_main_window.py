@@ -4,10 +4,7 @@ from typing import Union
 from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QFileDialog, QMainWindow, QHBoxLayout
 
 from skelly_viewer import SkellyViewer
-
-
 from skelly_viewer.utilities.freemocap_data_loader import FreeMoCapDataLoader
-from skelly_viewer.utilities.load_sample_data import load_sample_data
 
 
 class SkellyViewerMainWindow(QMainWindow):
@@ -20,27 +17,27 @@ class SkellyViewerMainWindow(QMainWindow):
         widget.setLayout(self._layout)
         self.setCentralWidget(widget)
 
-        self._folder_open_button = QPushButton('Load a session folder', self)
-        self._folder_open_button.clicked.connect(self._open_session_folder_dialog)
-
-        self._sample_data_loader_button = QPushButton('Load sample data', self)
-        self._sample_data_loader_button.clicked.connect(lambda: self._load_data(path=load_sample_data()))
-        self._layout.addWidget(self._sample_data_loader_button)
-
-        # self._video_folder_load_button = QPushButton('Load a folder of videos', self)
-        # self._video_folder_load_button.setEnabled(False)
-        # self._video_folder_load_button.clicked.connect(self.open_video_folder_dialogue)
-
         hbox = QHBoxLayout()
-        hbox.addWidget(self._folder_open_button)
-        # hbox.addWidget(self._video_folder_load_button)
         self._layout.addLayout(hbox)
 
+        self._folder_open_button = QPushButton('Load a session folder', self)
+        self._folder_open_button.clicked.connect(self._open_session_folder_dialog)
+        hbox.addWidget(self._folder_open_button)
 
+        # self._sample_data_loader_button = QPushButton('Load sample data', self)
+        # self._sample_data_loader_button.clicked.connect(lambda: self._load_data(path=load_sample_data()))
+        # hbox.addWidget(self._sample_data_loader_button)
+
+        self._toggle_video_display_button = QPushButton('Toggle Video Display', self)
+        self._toggle_video_display_button.clicked.connect(self._toggle_video_display)
+        hbox.addWidget(self._toggle_video_display_button)
 
         self._skelly_viewer = SkellyViewer()
         self._layout.addWidget(self._skelly_viewer)
 
+    def _toggle_video_display(self):
+        self._skelly_viewer.toggle_video_display()
+        
     def _open_session_folder_dialog(self):
         folder_path = QFileDialog.getExistingDirectory(None, "Choose a FreeMoCap recording folder",)
 

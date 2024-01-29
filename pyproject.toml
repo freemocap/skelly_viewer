@@ -25,9 +25,15 @@ keywords = ["basic",
             "python",
             "repository"] #change these to your project keywords
 
-dependencies = ["pytest","numpy","rich", "PySide6", 'opencv-contrib-python',"pandas","matplotlib", "requests"] #add additional dependencies here - try to pin versions as minimally as possible
+dependencies = ["pytest",
+    "numpy==1.26.2",
+    "rich==13.7.0",
+    "PySide6==6.6.*",
+    'opencv-contrib-python==4.8.*',
+    "pandas==2.1.*",
+    "matplotlib==3.8.2"]
 
-requires-python = ">=3.8"
+requires-python = ">=3.9,<3.12"
 
 dynamic = ["version"]
 
@@ -35,7 +41,7 @@ dynamic = ["version"]
 dev = ["black", "bumpver", "isort", "pip-tools", "pytest"]
 
 [tool.bumpver] #bump the version by entering `bumpver update` in the terminal
-current_version = "v2023.03.1017"
+current_version = "v2023.12.1020"
 version_pattern = "vYYYY.0M.BUILD[-TAG]"
 commit_message  = "Bump version {old_version} -> {new_version}"
 commit          = true

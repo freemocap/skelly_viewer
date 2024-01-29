@@ -36,6 +36,8 @@ class SkellyViewer(QWidget):
 
         self.connect_signals_to_slots()
 
+        self._is_video_display_enabled = True
+
         if mediapipe_skeleton_npy_path is not None:
             self.load_skeleton_data(mediapipe_skeleton_npy_path)
 
@@ -70,4 +72,9 @@ class SkellyViewer(QWidget):
 
     def _handle_slider_value_changed(self):
         self._skeleton_view_widget.update_skeleton_plot(self._frame_count_slider._slider.value())
-        self.multi_video_display.update_display(self._frame_count_slider._slider.value())
+        if self._is_video_display_enabled:
+            self.multi_video_display.update_display(self._frame_count_slider._slider.value())
+
+    def toggle_video_display(self):
+        self._is_video_display_enabled = not self._is_video_display_enabled
+        self.multi_video_display.setVisible(self._is_video_display_enabled)
