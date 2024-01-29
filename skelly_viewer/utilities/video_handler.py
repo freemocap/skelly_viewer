@@ -4,8 +4,8 @@ from typing import Union
 
 import cv2
 import numpy as np
-from PyQt6 import QtGui
-from PyQt6.QtCore import Qt
+from PySide6 import QtGui
+from PySide6.QtCore import Qt
 
 logger = logging.getLogger(__name__)
 

@@ -1,6 +1,6 @@
 # from: https://stackoverflow.com/a/22775990/14662833from
 
-from PyQt6 import QtWidgets, QtGui, QtCore
+from PySide6 import QtWidgets, QtGui, QtCore
 
 
 class CheckableComboBox(QtWidgets.QComboBox):

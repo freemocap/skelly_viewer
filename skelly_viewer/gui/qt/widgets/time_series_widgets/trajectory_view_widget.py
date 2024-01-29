@@ -1,10 +1,11 @@
 
 import matplotlib
-from PyQt6.QtWidgets import QWidget, QVBoxLayout
+from PySide6.QtWidgets import QWidget, QVBoxLayout
 
-matplotlib.use('Qt5Agg')
+matplotlib.use('QtAgg')
 
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
+from matplotlib.backends.backend_qt import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 
 from skelly_viewer.utilities.mediapipe_skeleton_builder import mediapipe_indices

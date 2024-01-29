@@ -1,16 +1,16 @@
 from typing import Union
 
 
-from PyQt6.QtCore import pyqtSignal
-from PyQt6.QtWidgets import QWidget, QVBoxLayout
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QWidget, QVBoxLayout
 
 from skelly_viewer.utilities.mediapipe_skeleton_builder import build_skeleton, mediapipe_indices, mediapipe_connections
 
 
 import matplotlib
 
-matplotlib.use('Qt5Agg')
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
+matplotlib.use('QtAgg')
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 
 from pathlib import Path
@@ -18,7 +18,7 @@ import numpy as np
 
 
 class SkeletonViewWidget(QWidget):
-    skeleton_data_loaded_signal = pyqtSignal()
+    skeleton_data_loaded_signal = Signal()
 
     def __init__(self):
         super().__init__()
