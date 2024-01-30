@@ -32,7 +32,7 @@ dependencies = ["pytest",
     'opencv-contrib-python==4.8.*',
     "pandas==2.1.*",
     "matplotlib==3.8.2",
-    skellytracker]
+    "skellytracker"]
 
 requires-python = ">=3.9,<3.12"
 
