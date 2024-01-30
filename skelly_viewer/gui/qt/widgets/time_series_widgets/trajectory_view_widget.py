@@ -7,8 +7,6 @@ matplotlib.use('Qt5Agg')
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 
-from skelly_viewer.utilities.mediapipe_skeleton_builder import mediapipe_indices
-
 
 import numpy as np
 
@@ -46,20 +44,20 @@ class TimeSeriesPlotterWidget(QWidget):
         self.axes_list = [self.x_ax,self.y_ax,self.z_ax]
         return fig, self.axes_list
 
-    def get_mediapipe_indices(self,marker_to_plot):
-        mediapipe_index = mediapipe_indices.index(marker_to_plot)
-        return mediapipe_index
+    def get_marker_indices(self, marker_to_plot, markers: list):
+        index = markers.index(marker_to_plot)
+        return index
     
 
-    def update_plot(self,marker_to_plot:str, freemocap_data:np.ndarray):
-        mediapipe_index = self.get_mediapipe_indices(marker_to_plot)
+    def update_plot(self,marker_to_plot:str, freemocap_data: np.ndarray, markers: list):
+        index = self.get_marker_indices(marker_to_plot, markers)
 
         axes_names = ['X Axis', 'Y Axis', 'Z Axis']
 
         for dimension, (ax,ax_name) in enumerate(zip(self.axes_list,axes_names)):
 
             ax.cla()
-            ax.plot(freemocap_data[:,mediapipe_index,dimension], label = 'FreeMoCap', alpha = .7)
+            ax.plot(freemocap_data[:,index,dimension], label = 'FreeMoCap', alpha = .7)
 
             ax.set_ylabel(ax_name)
             
