@@ -1,13 +1,13 @@
-from typing import Union
+from typing import List, Union
 
 import matplotlib
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QWidget, QVBoxLayout
 
-from skelly_viewer.utilities.mediapipe_skeleton_builder import build_skeleton, mediapipe_indices, mediapipe_connections
+from skelly_viewer.utilities.skeleton_builder import build_skeleton
 
-matplotlib.use('Qt5Agg')
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
+matplotlib.use('QtAgg')
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 from pathlib import Path
 import numpy as np
@@ -25,11 +25,12 @@ class SkeletonViewWidget(QWidget):
         self._layout.addWidget(self._figure_widget)
         self._skel_bones = None
 
-    def load_skeleton_data(self, mediapipe_skeleton_npy_path: Union[str, Path]):
-        self._skeleton_3d_frame_marker_xyz = np.load(str(mediapipe_skeleton_npy_path))
-        self._mediapipe_skeleton = build_skeleton(skeleton_3d_frame_marker_xyz=self._skeleton_3d_frame_marker_xyz,
-                                                  pose_estimation_markers_list=mediapipe_indices,
-                                                  pose_estimation_connections_dict=mediapipe_connections)
+    def load_skeleton_data(self, skeleton_npy_path: Union[str, Path], connections: List[tuple]):
+        self._skeleton_3d_frame_marker_xyz = np.load(str(skeleton_npy_path))
+        self._skeleton = build_skeleton(
+            skeleton_3d_frame_marker_xyz=self._skeleton_3d_frame_marker_xyz, 
+            pose_estimation_connections=connections
+            )
 
         self._number_of_frames = self._skeleton_3d_frame_marker_xyz.shape[0]
         self._initialize_3d_axes()
@@ -75,28 +76,28 @@ class SkeletonViewWidget(QWidget):
 
         self._figure_widget.figure.canvas.draw_idle()
 
-    def _plot_skeleton_bones(self, frame_number):
+    def _plot_skeleton_bones(self, frame_number: int):
         if self._skel_bones is None:
-            this_frame_skeleton_data = self._mediapipe_skeleton[frame_number]
+            this_frame_skeleton_data = self._skeleton[frame_number]
             self._skel_bones = []
-            for connection in this_frame_skeleton_data.keys():
-                line_start_point = this_frame_skeleton_data[connection][0]
-                line_end_point = this_frame_skeleton_data[connection][1]
+            for connection in this_frame_skeleton_data:
+                line_start_point = connection[0]
+                line_end_point = connection[1]
 
-                bone_x, bone_y, bone_z = [line_start_point[0], line_end_point[0]], [line_start_point[1],
-                                                                                    line_end_point[1]], [
-                                             line_start_point[2], line_end_point[2]]
+                bone_x = [line_start_point[0], line_end_point[0]]
+                bone_y = [line_start_point[1], line_end_point[1]]
+                bone_z = [line_start_point[2], line_end_point[2]]
                 bone = self._3d_axes.plot(bone_x, bone_y, bone_z)[0]
                 self._skel_bones.append(bone)
         else:
-            this_frame_skeleton_data = self._mediapipe_skeleton[frame_number]
-            for i, connection in enumerate(this_frame_skeleton_data.keys()):
-                line_start_point = this_frame_skeleton_data[connection][0]
-                line_end_point = this_frame_skeleton_data[connection][1]
+            this_frame_skeleton_data = self._skeleton[frame_number]
+            for i, connection in enumerate(this_frame_skeleton_data):
+                line_start_point = connection[0]
+                line_end_point = connection[1]
 
-                bone_x, bone_y, bone_z = [line_start_point[0], line_end_point[0]], [line_start_point[1],
-                                                                                    line_end_point[1]], [
-                                             line_start_point[2], line_end_point[2]]
+                bone_x = [line_start_point[0], line_end_point[0]]
+                bone_y = [line_start_point[1], line_end_point[1]]
+                bone_z = [line_start_point[2], line_end_point[2]]
                 bone = self._skel_bones[i]
                 bone.set_xdata(bone_x)
                 bone.set_ydata(bone_y)

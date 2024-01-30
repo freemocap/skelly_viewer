@@ -55,7 +55,7 @@ class SkellyViewerMainWindow(QMainWindow):
         data_loader = FreeMoCapDataLoader(path_to_session_folder=self._session_folder_path)
 
         self._skelly_viewer.set_data_paths(
-            mediapipe_skeleton_npy_path=data_loader.find_skeleton_npy_file_name(),
+            skeleton_npy_path=data_loader.find_skeleton_npy_file_name(),
             video_folder_path=data_loader.find_synchronized_videos_folder_path()
         )
 
