@@ -2,8 +2,8 @@ from pathlib import Path
 
 import numpy as np
 
-from skelly_viewer.config.folder_and_file_names import MEDIAPIPE_3D_BODY_FILE_NAME, OUTPUT_DATA_FOLDER_NAME, \
-    TOTAL_BODY_CENTER_OF_MASS_NPY_FILE_NAME
+from skelly_viewer.config.folder_and_file_names import MEDIAPIPE_3D_BODY_FILE_NAME, MEDIAPIPE_3D_BODY_ORIGIN_ALIGNED_FILE_NAME,\
+    OUTPUT_DATA_FOLDER_NAME, TOTAL_BODY_CENTER_OF_MASS_NPY_FILE_NAME
 
 
 class FreeMoCapDataLoader:
@@ -28,11 +28,12 @@ class FreeMoCapDataLoader:
 
         npy_path_list = [path.name for path in self.find_output_data_folder_path().glob("*.npy")]
 
+        # TODO: Find a mediapipe independent version of this
+        if MEDIAPIPE_3D_BODY_ORIGIN_ALIGNED_FILE_NAME in npy_path_list:
+            return self.find_output_data_folder_path() / MEDIAPIPE_3D_BODY_ORIGIN_ALIGNED_FILE_NAME
+
         if MEDIAPIPE_3D_BODY_FILE_NAME in npy_path_list:
             return self.find_output_data_folder_path() / MEDIAPIPE_3D_BODY_FILE_NAME
-
-        if 'mediapipe_body_3d_xyz.npy' in npy_path_list:
-            return self.find_output_data_folder_path() / 'mediapipe_body_3d_xyz.npy'
 
         raise Exception(f"Could not find a skeleton NPY file in path {str(self.find_output_data_folder_path())}")
 
