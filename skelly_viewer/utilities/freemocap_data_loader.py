@@ -10,11 +10,6 @@ class FreeMoCapDataLoader:
     def __init__(self, path_to_session_folder: Path):
         self._recording_folder_path = path_to_session_folder
 
-    def load_mediapipe_body_data(self):
-        path_to_mediapipe_body_data = self.find_output_data_folder_path()
-        mediapipe_body_data = np.load(str(path_to_mediapipe_body_data))
-        return mediapipe_body_data
-
     def load_total_body_COM_data(self):
         path_to_total_body_COM_data = self.find_output_data_folder_path() / TOTAL_BODY_CENTER_OF_MASS_NPY_FILE_NAME
         total_body_COM_data = np.load(str(path_to_total_body_COM_data))
@@ -33,7 +28,7 @@ class FreeMoCapDataLoader:
 
         npy_path_list = [path.name for path in self.find_output_data_folder_path().glob("*.npy")]
 
-        if 'mediaPipeSkel_3d_origin_aligned.npy' in npy_path_list:
+        if MEDIAPIPE_3D_BODY_FILE_NAME in npy_path_list:
             return self.find_output_data_folder_path() / MEDIAPIPE_3D_BODY_FILE_NAME
 
         if 'mediapipe_body_3d_xyz.npy' in npy_path_list:
