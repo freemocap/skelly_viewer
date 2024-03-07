@@ -53,6 +53,7 @@ class MultiVideoDisplay(QWidget):
         self._video_handler_dictionary = self._create_video_handlers(list(Path(path_to_video_folder).glob('*.mp4')))
         self._image_label_widget_dictionary = self._create_image_label_widgets_for_videos(
             number_of_videos=len(self._video_handler_dictionary))
+        self._remove_widets_from_layout()
         self._add_widgets_to_layout()
 
         self.update_worker.video_handlers = list(self._video_handler_dictionary.values())
@@ -63,20 +64,6 @@ class MultiVideoDisplay(QWidget):
 
     def stop_update_worker(self):
         self.update_worker.terminate()
-
-
-
-    def _add_widgets_to_layout(self):
-        column_count = 0
-        row_count = 0
-        for widget in self._image_label_widget_dictionary:
-            self.video_display_layout.addWidget(self._image_label_widget_dictionary[widget], row_count, column_count)
-
-            # This section is for formatting the videos in the grid nicely - it fills out two columns and then moves on to the next row
-            column_count += 1
-            if column_count % MAX_COLUMN_COUNT == 0:
-                column_count = 0
-                row_count += 1
 
     def update_display(self, frame_number: int):
         # logger.debug(f"Updating video display to frame#{frame_number}")
@@ -145,6 +132,13 @@ class MultiVideoDisplay(QWidget):
             if column_count % MAX_COLUMN_COUNT == 0:
                 column_count = 0
                 row_count += 1
+
+    def _remove_widets_from_layout(self):
+        """Removes all widgets from the video display layout"""
+        # solution from here https://stackoverflow.com/questions/4528347/clear-all-widgets-in-a-layout-in-pyqt
+        for i in reversed(range(self.video_display_layout.count())): 
+            self.video_display_layout.itemAt(i).widget().setParent(None)
+
 
 
 if __name__ == '__main__':
