@@ -8,6 +8,7 @@ from PySide6.QtCore import QThread, Qt, Signal
 from PySide6.QtGui import QPixmap, QImage
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLabel, QApplication
 
+from skelly_viewer.utilities.get_video_paths import get_video_paths
 from skelly_viewer.utilities.video_handler import VideoHandler
 
 logger = logging.getLogger(__name__)
@@ -50,7 +51,7 @@ class MultiVideoDisplay(QWidget):
         self.update_worker = UpdateDisplayWorker([])
 
     def generate_video_display(self, path_to_video_folder: Union[str, Path]):
-        self._video_handler_dictionary = self._create_video_handlers(list(Path(path_to_video_folder).glob('*.mp4')))
+        self._video_handler_dictionary = self._create_video_handlers(get_video_paths(path_to_video_folder))
         self._image_label_widget_dictionary = self._create_image_label_widgets_for_videos(
             number_of_videos=len(self._video_handler_dictionary))
         self._remove_widets_from_layout()
