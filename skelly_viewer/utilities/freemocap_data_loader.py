@@ -42,12 +42,13 @@ class FreeMoCapDataLoader:
         raise Exception(f"Could not find a skeleton NPY file in path {str(self.find_output_data_folder_path())}")
 
     def find_synchronized_videos_folder_path(self) -> Path:
-        for subfolder_path in self._recording_folder_path.iterdir():
-            if subfolder_path.name == 'annotated_videos':
-                return subfolder_path
-            if subfolder_path.name == 'synchronized_videos':
-                return subfolder_path
-            if subfolder_path.name == 'SyncedVideos':
-                return subfolder_path
+        subpaths = list(self._recording_folder_path.glob('*'))
+
+        if self._recording_folder_path / 'annotated_videos' in subpaths:
+            return self._recording_folder_path / 'annotated_videos'
+        if self._recording_folder_path / 'synchronized_videos' in subpaths:
+            return self._recording_folder_path / 'synchronized_videos'
+        if self._recording_folder_path / 'SyncedVideos' in subpaths:
+            return self._recording_folder_path / 'SyncedVideos'
 
         raise Exception(f"Could not find a videos folder in path {str(self._recording_folder_path)}")
