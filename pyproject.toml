@@ -33,7 +33,7 @@ dependencies = ["pytest",
     "pandas==2.1.*",
     "matplotlib==3.8.2"]
 
-requires-python = ">=3.9,<3.12"
+requires-python = ">=3.9,<3.13"
 
 dynamic = ["version"]
 
