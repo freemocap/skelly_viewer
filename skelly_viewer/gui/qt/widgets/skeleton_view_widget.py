@@ -48,6 +48,7 @@ class SkeletonViewWidget(QWidget):
         self._calculate_axes_means(self._skeleton_3d_frame_marker_xyz)
         self.skel_x, self.skel_y, self.skel_z = self._get_x_y_z_data(0)
         self.skel_points = self._3d_axes.scatter(self.skel_x, self.skel_y, self.skel_z, 'ko', s=1)
+        self._skel_bones = None
         self.skel_bones = self._plot_skeleton_bones(0)
 
     def _calculate_axes_means(self, skeleton_3d_frame_marker_xyz: np.ndarray):

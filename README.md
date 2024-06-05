@@ -1,6 +1,6 @@
 # Installation
 
-Create a conda environment using Python 3.9 (though 3.8/3.10 should work too, if that matters) and activate your conda environment 
+Create a conda environment using Python 3.11 (recommended, untested on other versions) and activate your conda environment 
 
 Install skelly_viewer using `pip install skelly_viewer`
 
