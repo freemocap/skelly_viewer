@@ -7,7 +7,6 @@ import numpy as np
 from PySide6.QtCore import QThread, Qt, Signal
 from PySide6.QtGui import QPixmap, QImage
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLabel, QApplication
-from skelly_viewer.utilities.get_video_paths import get_video_paths
 
 from skelly_viewer.utilities.get_video_paths import get_video_paths
 from skelly_viewer.utilities.video_handler import VideoHandler

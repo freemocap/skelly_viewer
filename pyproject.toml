@@ -31,8 +31,7 @@ dependencies = ["pytest",
     "PySide6==6.6.*",
     'opencv-contrib-python==4.8.*',
     "pandas==2.1.*",
-    "matplotlib==3.8.2",
-    "skellytracker"]
+    "matplotlib==3.8.2"]
 
 requires-python = ">=3.9,<3.12"
 
@@ -40,6 +39,7 @@ dynamic = ["version"]
 
 [project.optional-dependencies]
 dev = ["black", "bumpver", "isort", "pip-tools", "pytest"]
+standalone = ["skellytracker"]
 
 [tool.bumpver] #bump the version by entering `bumpver update` in the terminal
 current_version = "v2024.04.1022"
