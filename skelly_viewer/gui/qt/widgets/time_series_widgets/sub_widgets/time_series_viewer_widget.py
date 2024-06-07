@@ -6,7 +6,7 @@ from skelly_viewer.gui.qt.widgets.time_series_widgets.trajectory_view_widget imp
 
 
 class TimeSeriesViewer(QWidget):
-    def __init__(self, freemocap_data:np.ndarray):
+    def __init__(self, freemocap_data: np.ndarray, markers: list):
         super().__init__()
 
         self.layout = QVBoxLayout()
@@ -14,8 +14,9 @@ class TimeSeriesViewer(QWidget):
 
 
         self.freemocap_data = freemocap_data
+        self.connections = markers
 
-        self.marker_selector_widget = MarkerSelectorWidget()
+        self.marker_selector_widget = MarkerSelectorWidget(markers)
         self.layout.addWidget(self.marker_selector_widget)
 
         self.time_series_plotter_widget = TimeSeriesPlotterWidget()
@@ -25,19 +26,19 @@ class TimeSeriesViewer(QWidget):
         self.connect_signals_to_slots()
 
     def connect_signals_to_slots(self):
-        self.marker_selector_widget.marker_to_plot_updated_signal.connect(lambda: self.time_series_plotter_widget.update_plot(self.marker_selector_widget.current_marker,self.freemocap_data))
+        self.marker_selector_widget.marker_to_plot_updated_signal.connect(lambda: self.time_series_plotter_widget.update_plot(self.marker_selector_widget.current_marker,self.freemocap_data, self.markers))
 
 
 if __name__ == "__main__":
     
     class MainWindow(QMainWindow):
-        def __init__(self, freemocap_data:np.ndarray):
+        def __init__(self, freemocap_data: np.ndarray, connections: list):
             super().__init__()
         
             layout = QVBoxLayout()
             widget = QWidget()
 
-            self.time_series_viewer = TimeSeriesViewer(freemocap_data)
+            self.time_series_viewer = TimeSeriesViewer(freemocap_data, connections)
             layout.addWidget(self.time_series_viewer)
 
             widget.setLayout(layout)
