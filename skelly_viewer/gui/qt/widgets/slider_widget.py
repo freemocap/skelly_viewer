@@ -64,6 +64,10 @@ class PlayPauseCountSlider(QWidget):
         self._slider.setValue(0)
         self._slider.setMaximum(self.slider_max)
 
+    def reset_slider(self):
+        self.set_slider_range(1)
+        self.set_frames_per_second(PRESUMED_FRAMES_PER_SECOND)
+
     @Slot()
     def _timer_timeout(self):
         if self._slider.value() < self.slider_max:
