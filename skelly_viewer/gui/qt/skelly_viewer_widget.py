@@ -27,7 +27,6 @@ class SkellyViewer(QWidget):
         layout.addLayout(skeleton_and_videos_layout)
 
         self.multi_video_display = MultiVideoDisplay()
-        # self.multi_video_display.setFixedSize(self.skeleton_view_widget.size()*1.5)
         skeleton_and_videos_layout.addWidget(self.multi_video_display)
 
         self._frame_count_slider = PlayPauseCountSlider()
@@ -46,6 +45,7 @@ class SkellyViewer(QWidget):
 
     def load_skeleton_data(self, mediapipe_skeleton_npy_path: Union[str, Path]):
         self._skeleton_view_widget.load_skeleton_data(mediapipe_skeleton_npy_path)
+        # TODO: when we initialize the videos we set the display to the current slider count, but don't do it here
 
     def generate_video_display(self, video_folder_path: Union[str, Path]):
         self.multi_video_display.generate_video_display(video_folder_path)
@@ -60,15 +60,31 @@ class SkellyViewer(QWidget):
 
         self._frame_count_slider._slider.setValue(0)
 
+    def reset_widgets(self):
+        self._frame_count_slider.reset_slider()
+        self.multi_video_display.reset_video_display()
+        self._skeleton_view_widget.reset_skeleton_view()
+
     def connect_signals_to_slots(self):
         self._skeleton_view_widget.skeleton_data_loaded_signal.connect(
             self._handle_data_loaded_signal)
+        
+        self.multi_video_display.video_loaded_signal.connect(self._handle_video_loaded_signal)
 
         self._frame_count_slider._slider.valueChanged.connect(self._handle_slider_value_changed)
 
     def _handle_data_loaded_signal(self):
         self._frame_count_slider.set_slider_range(self._skeleton_view_widget._number_of_frames)
         self._frame_count_slider.setEnabled(True)
+
+        # TODO: check if video length matches data length, if not assume videos are wrong and clear them
+
+    def _handle_video_loaded_signal(self):
+        # TODO: we should check the FPS of the videos and set the slider accordingly
+        # self._frame_count_slider.set_frames_per_second(TODO)
+
+        # TODO: check that video length matches data length, if not assume data is wrong and clear it
+        pass
 
     def _handle_slider_value_changed(self):
         self._skeleton_view_widget.update_skeleton_plot(self._frame_count_slider._slider.value())

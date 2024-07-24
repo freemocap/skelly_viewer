@@ -39,6 +39,8 @@ class UpdateDisplayWorker(QThread):
 
 
 class MultiVideoDisplay(QWidget):
+    video_loaded_signal = Signal()
+
     def __init__(self):
         super().__init__()
 
