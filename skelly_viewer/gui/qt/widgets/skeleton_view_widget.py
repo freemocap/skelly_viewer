@@ -54,11 +54,6 @@ class SkeletonViewWidget(QWidget):
         self._skel_bones = None
         self.skel_bones = self._plot_skeleton_bones(0)
 
-    def reset_slider(self):
-        self._slider_max = self._number_of_frames - 1
-        self.slider.setValue(0)
-        self.slider.setMaximum(self._slider_max)
-
     def _calculate_axes_means(self, skeleton_3d_frame_marker_xyz: np.ndarray):
         self._data_midpoint_x = np.nanmean(skeleton_3d_frame_marker_xyz[:, :, 0])
         self._data_midpoint_y = np.nanmean(skeleton_3d_frame_marker_xyz[:, :, 1])
