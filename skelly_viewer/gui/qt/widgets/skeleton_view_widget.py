@@ -36,6 +36,10 @@ class SkeletonViewWidget(QWidget):
 
         self.skeleton_data_loaded_signal.emit()
 
+    def reset_skeleton_view(self):
+        if self._3d_axes:
+            self._3d_axes.cla()
+
     def initialize_skeleton_plot(self):
         figure_widget = Mpl3DPlotCanvas(parent=self)
         figure_widget.setMinimumSize(100, 100)

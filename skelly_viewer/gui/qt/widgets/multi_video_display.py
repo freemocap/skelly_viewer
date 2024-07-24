@@ -60,6 +60,12 @@ class MultiVideoDisplay(QWidget):
         self.update_worker.video_handlers = list(self._video_handler_dictionary.values())
         self.update_worker.updated.connect(self.update_display)
 
+    def reset_video_display(self):
+        # this removes all video widgets from the layout
+        self._remove_widets_from_layout()
+        # we also want to make sure we're not updating frames for empty videos
+        self.update_worker.video_handlers = []  # TODO: check if this breaks things
+
     def start_update_worker(self):
         self.update_worker.start()
 
