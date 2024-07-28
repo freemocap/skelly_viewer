@@ -11,7 +11,7 @@ npm install
 
 ## Running the app in `dev` mode
 ```
-npm run tauri-dev
+npm run dev
 ```
 
 ## Build the app

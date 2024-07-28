@@ -18,7 +18,7 @@ async function main() {
     const scriptName = process.platform === 'win32' ? 'install-python.bat' : 'install-python.sh';
     const scriptPath = path.join(__dirname, scriptName);
     const pythonMainFileFullPath = path.join(__dirname, '../src-python/main.py')
-    const pythonRequirementsFullPath = path.join(__dirname, '../install/requirements.txt')
+    const pythonRequirementsFullPath = path.join(__dirname, '../pyproject.toml')
     const binaryDestinationFolder = path.join(__dirname, '../dist')
     const tauriConfigPath =  path.join(__dirname, '../src-tauri/tauri.conf.json')
 

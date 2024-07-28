@@ -5,6 +5,7 @@
   "scripts": {
     "tauri": "tauri",
     "dev": "cd src-nuxt && npm run dev",
+    "run-python": "python src-python/main.py",
     "tauri-dev": "npm run tauri dev",
     "build": "tauri build",
     "nuke-install": "git clean -dfx && npm install",

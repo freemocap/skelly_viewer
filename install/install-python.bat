@@ -6,7 +6,7 @@ if "%~1"=="" (
     exit /b 1
 )
 
-set pythonRequirementsFullPath=%~1
+set pyProjectTomlFullPath=%~1
 set targetBinaryName=%~2
 set pythonMainFilePath=%~3
 set binaryDestinationFolder=%~4
@@ -24,7 +24,7 @@ echo Upgrading pip...
 CALL python -m pip install --upgrade pip
 
 echo Installing Python requirements...
-CALL pip install -r %pythonRequirementsFullPath%
+CALL pip install -e %pythonRequirementsFullPath%
 
 echo Building with PyInstaller...
 CALL pyinstaller --onefile %pythonMainFilePath% --distpath %binaryDestinationFolder% --name %targetBinaryName%
