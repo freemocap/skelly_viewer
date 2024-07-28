@@ -4,9 +4,9 @@
   "type": "module",
   "scripts": {
     "tauri": "tauri",
-    "dev": "npm run tauri dev",
+    "dev": "cd src-nuxt && npm run dev",
+    "tauri-dev": "npm run tauri dev",
     "build": "tauri build",
-    "nuxt-dev": "cd src-nuxt && npm run dev",
     "nuke-install": "git clean -dfx && npm install",
     "nuke-n-go": "git clean -dfx && npm install && npm run dev",
     "install-nuxt": "cd src-nuxt && npm install",
