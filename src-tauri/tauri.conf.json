@@ -13,15 +13,7 @@
   "tauri": {
     "allowlist": {
       "all": true,
-      "shell": {
-        "sidecar": true,
-        "scope": [
-          {
-            "name": "dist/src-python-executable",
-            "sidecar": true
-          }
-        ]
-      },
+      "shell": {      },
       "fs": {
         "all": true,
         "writeFile": true,
@@ -36,7 +28,7 @@
       "deb": {
         "depends": []
       },
-      "externalBin": ["dist/src-python-executable"],
+      "externalBin": [],
       "icon": [
         "../shared/freemocap-skelly-icon.ico"
       ],
