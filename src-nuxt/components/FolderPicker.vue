@@ -2,22 +2,24 @@
 <template>
   <div>
     <button @click="selectFolder">Select Folder</button>
-    <p v-if="selectedPath">Selected Path: {{ selectedPath }}</p>
+    <p v-if="selectedPath">Selected Path: {{ recordingDataStore.recordingPath }}</p>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { dialog } from '@tauri-apps/api';
 
-const selectedPath = ref('');
+import {dialog} from "@tauri-apps/api";
+
+const recordingDataStore = useRecordingDataStore();
+
 
 const selectFolder = async () => {
   try {
     const selected = await dialog.open({ directory: true });
     if (selected) {
-      selectedPath.value = selected;
+      recordingDataStore.setRecordingPath(selected)
     }
+
   } catch (error) {
     console.error('Failed to select folder:', error);
   }

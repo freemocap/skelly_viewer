@@ -17,10 +17,13 @@
   "dependencies": {
     "@mdi/font": "^7.4.47",
     "@tauri-apps/api": "^1.5.3",
-    "execa": "^8.0.1"
+    "execa": "^8.0.1",
+    "papaparse": "^5.4.1",
+    "vue-papa-parse": "^3.1.0"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^1.5.11",
+    "@types/papaparse": "^5.3.14",
     "cross-env": "^7.0.3",
     "shx": "^0.3.4",
     "vite-plugin-vuetify": "^2.0.3",
