@@ -10,7 +10,8 @@ name: Upload Python Package
 
 on:
   push:
-    tags: [ v* ]
+    branches:
+      - main
 
 permissions:
   contents: read
@@ -30,6 +31,9 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install flit
+        pip install bumpver
+    - name: Bump Version
+      run: bumpver update --patch
     - name: Build package
       run: python -m flit build
     - name: Publish package to pypi
