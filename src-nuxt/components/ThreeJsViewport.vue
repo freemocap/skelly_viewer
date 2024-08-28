@@ -14,9 +14,6 @@
 
 <script setup lang="ts">
 import * as THREE from 'three';
-const camerasStore = useCamerasStore();
-const camerasReady = computed(() => camerasStore.camerasReady);
-const videoTextures = ref<THREE.Texture[]>([]);
 
 
 const planeWidth:number = 1.6;
