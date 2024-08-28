@@ -31,5 +31,9 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install bumpver
+    - name: Setup git identification
+      run: |
+        git config user.name 'GitHub Actions'
+        git config user.email 'info@freemocap.org'
     - name: Bump Version
       run: bumpver update --patch
