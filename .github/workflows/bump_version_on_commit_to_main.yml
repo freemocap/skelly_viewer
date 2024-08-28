@@ -6,12 +6,11 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Upload Python Package
-
+name: Bump Version
 on:
   push:
-    tags:
-      - v*
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -31,11 +30,6 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install flit
-    - name: Build package
-      run: python -m flit build
-    - name: Publish package to pypi
-      uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29
-      with:
-        user: __token__
-        password: ${{ secrets.PYPI_API_TOKEN }}
+        pip install bumpver
+    - name: Bump Version
+      run: bumpver update --patch
