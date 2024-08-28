@@ -10,8 +10,7 @@ name: Upload Python Package to PyPi
 
 on:
   push:
-    tags:
-      - v*
+    tags: [v*]
   workflow_dispatch:
 
 permissions:
