@@ -54,4 +54,4 @@ push            = true
 
 
 [project.scripts]
-skelly_viewer = "skelly_viewer.__main__:main"
+skelly_viewer = "skelly_viewer.__main__:run"
