@@ -1,7 +1,7 @@
 """Top-level package for basic_template_repo."""
 
 __package_name__ = "skelly_viewer"
-__version__ = "v2024.08.1025"
+__version__ = "v2024.12.1026"
 
 __author__ = """Skelly FreeMoCap"""
 __email__ = "info@freemocap.org"
